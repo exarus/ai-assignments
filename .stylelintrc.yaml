@@ -1,0 +1,20 @@
+---
+extends: stylelint-config-standard
+processors:
+  - stylelint-processor-html
+rules:
+  font-family-name-quotes: always-where-recommended
+  function-url-quotes: always
+  selector-attribute-quotes: always # https://mathiasbynens.be/notes/unquoted-attribute-values
+  string-quotes: single
+
+  # Autoprefixer handles prefixes
+  at-rule-no-vendor-prefix: true
+  media-feature-name-no-vendor-prefix: true
+  property-no-vendor-prefix: true
+  selector-no-vendor-prefix: true
+  value-no-vendor-prefix: true
+
+  font-weight-notation: named-where-possible
+  function-url-no-scheme-relative: true # https://twitter.com/paul_irish/status/588502455530311680
+  max-line-length: 140

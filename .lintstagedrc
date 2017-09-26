@@ -1,0 +1,7 @@
+---
+'*.css':
+  - stylelint --fix '**'
+  - git add
+'*.js':
+  - eslint --fix --ext .js,.vue src test/unit/specs
+  - git add
