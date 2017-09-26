@@ -14,7 +14,8 @@
           "last 1 FirefoxAndroid version",
           "last 1 iOS version"
         ]
-      }
+      },
+      "useBuiltIns": "usage"
     }],
     "stage-2"
   ],
