@@ -24,4 +24,6 @@ npm run unit
 npm test
 ```
 
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+## License
+
+* [Apache Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
