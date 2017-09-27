@@ -4,7 +4,7 @@
       div.grid
         div.row(v-for='row in grid')
           div.cell(v-for='cell in row') {{cell}}
-      el-button.solution(type='primary' size='large') Find solution
+      el-button.solution(type='primary' size='large' @click='') Find solution
 </template>
 <script>
 import { Button } from 'element-ui'
@@ -30,11 +30,13 @@ export default {
     }
   },
   created () {
-    const cellBuffer = new Uint8Array(100)
+    const moveCount = 150
+
+    const cellBuffer = new Uint8Array(moveCount)
     window.crypto.getRandomValues(cellBuffer)
     const cells = cellBuffer.map(i => i % (gridSize * gridSize))
 
-    const directionBuffer = new Uint8Array(100)
+    const directionBuffer = new Uint8Array(moveCount)
     window.crypto.getRandomValues(directionBuffer)
     const directions = directionBuffer.map(i => i % directionsCount)
 
@@ -57,24 +59,15 @@ export default {
       let newI = i
       let newJ = j
       switch (direction) {
-        case directions.TOP:
-          newI = i + 1
-          break
-        case directions.BOTTOM:
-          newI = i - 1
-          break
-        case directions.LEFT:
-          newJ = j - 1
-          break
-        case directions.RIGHT:
-          newJ = j + 1
-          break
-        default:
-          throw new Error(`Invalid direction: ${direction}`)
+        case directions.TOP: ++newI; break
+        case directions.BOTTOM: --newI; break
+        case directions.LEFT: --newJ; break
+        case directions.RIGHT: ++newJ; break
+        default: throw new Error(`Invalid direction: ${direction}`)
       }
 
       const min = 0
-      const max = gridSize * gridSize - 1
+      const max = gridSize - 1
       if (newI >= min && newI <= max && newJ >= min && newJ <= max) {
         const tmp = this.grid[i][j]
         this.grid[i][j] = this.grid[newI][newJ]
@@ -89,6 +82,9 @@ export default {
         : (id < gridSize * 2) ? 1 : 2
       const j = id % gridSize
       return [i, j]
+    },
+    findSolution () {
+
     }
   },
   components: {
