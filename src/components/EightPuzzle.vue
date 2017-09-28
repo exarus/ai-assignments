@@ -55,7 +55,10 @@ export default {
         const swapWithEmptyCell = targetVal === '' || fromVal === ''
         if (swapWithEmptyCell) {
           const nonEmptyCellIndices = this.cellIndices(parseInt(targetVal || fromVal))
-          this.tryMoveCell(nonEmptyCellIndices, this.emptyCellIndices)
+          const moved = this.tryMoveCell(nonEmptyCellIndices, this.emptyCellIndices)
+          if (!moved) {
+            console.log('Bad move')
+          }
         }
       }
     },
