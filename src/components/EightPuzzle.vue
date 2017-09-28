@@ -5,7 +5,8 @@
       .row(v-for='row in grid')
         .cell(
           v-for='cell in row'
-          draggable='true'
+          :class='cellClassObject(cell)'
+          :draggable='isDraggable(cell).toString()'
           @dragstart='dragCell(cell)'
           @dragover.prevent=''
           @drop.prevent='dropCell(cell)'
@@ -18,6 +19,7 @@
 import Vue from 'vue'
 import _last from 'lodash-es/last'
 import { Button } from 'element-ui'
+import { manhattanDistance } from '@/algorithms/8-puzzle-solution'
 
 const directions = {
   TOP: 0,
@@ -49,7 +51,7 @@ export default {
     shuffle () {
       const moveCount = 150
       const moveBuffer = new Uint8Array(moveCount)
-      window.crypto.getRandomValues(moveBuffer)
+      crypto.getRandomValues(moveBuffer)
       const moves = moveBuffer.map(i => i % Object.keys(directions).length)
 
       moves.forEach(m => this.tryMoveEmptyCell(m))
@@ -57,9 +59,8 @@ export default {
     findSolution () {
       console.log('TODO')
     },
-    dragCell (value) {
-      // TODO drag only if near empty
-      this.draggedCell = value
+    dragCell (cell) {
+      this.draggedCell = cell
     },
     dropCell (targetCell) {
       const isEmptyDragged = this.draggedCell === this.emptyCell
@@ -71,6 +72,15 @@ export default {
         }
       }
       this.draggedCell = 0
+    },
+    isDraggable (cell) {
+      const distance = manhattanDistance(this.cellIndices(cell), this.emptyCellIndices)
+      return distance === 1
+    },
+    cellClassObject (cell) {
+      return {
+        'non-selectable': !this.isDraggable(cell)
+      }
     },
     tryMoveCell ([fromI, fromJ], [toI, toJ]) {
       const min = 0
@@ -98,9 +108,9 @@ export default {
       }
       this.tryMoveCell([fromI, fromJ], [toI, toJ])
     },
-    cellIndices (value) {
+    cellIndices (cell) {
       for (let i = 0; i < this.grid.length; i++) {
-        const j = this.grid[i].indexOf(value)
+        const j = this.grid[i].indexOf(cell)
         if (j !== -1) {
           return [i, j]
         }
@@ -151,6 +161,9 @@ export default {
           height 24.2vmin
           font-size: min(4em, 24.2vmin)
 
+          &.non-selectable
+            user-select none
+
     > .control
       width 74.2vmin
       margin 1vmin
@@ -161,5 +174,5 @@ export default {
       > button
         flex: 50%
         max-width 37vmin
-        font-size max(1rem, 1.56em)
+        font-size max(1rem, 1.33em)
 </style>
