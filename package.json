@@ -11,7 +11,7 @@
     "unit": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run",
     "test": "npm run unit",
     "lint:js": "cross-env NODE_ENV=production eslint --ext .js,.vue src test/unit/specs",
-    "lint:css": "stylelint \"src/**/*.css src/**/*.vue\"",
+    "lint:css": "stylelint \"src/**/*.css src/**/*.sss src/**/*.styl src/**/*.vue\"",
     "lint": "run-p lint:js lint:css",
     "precommit": "lint-staged"
   },
