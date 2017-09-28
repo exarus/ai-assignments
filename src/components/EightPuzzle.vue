@@ -3,10 +3,11 @@ div.root
   div.assignment
     div.grid
       div.row(v-for='row in grid')
-        div.cell(v-for='cell in row') {{cell}}
+        div.cell(v-for='cell in row'
+          @drop.prevent='dropCell' @dragstart='dragCell(cell, $event)' @dragover.prevent='' draggable='true') {{cell}}
     div.control
-      el-button(type='success' size='large' @click.prevent='shuffle') Shuffle
-      el-button(type='primary' size='large' @click.prevent='findSolution') Find solution
+      el-button(@click.prevent='shuffle' type='success' size='large') Shuffle
+      el-button(@click.prevent='findSolution' type='primary' size='large' ) Find solution
 </template>
 <script>
 import Vue from 'vue'
@@ -31,12 +32,7 @@ export default {
   },
   computed: {
     emptyCellIndices () {
-      for (let i = 0; i < this.grid.length; i++) {
-        const j = this.grid[i].indexOf(null)
-        if (j !== -1) {
-          return [i, j]
-        }
-      }
+      return this.cellIndices(null)
     }
   },
   methods: {
@@ -48,10 +44,27 @@ export default {
 
       moves.forEach(m => this.tryMoveEmptyCell(m))
     },
+    dragCell (value, event) {
+      const text = (value != null) ? value : ''
+      event.dataTransfer.setData('text', text)
+    },
+    dropCell (event) {
+      if (event.target.classList.contains('cell')) {
+        const fromVal = event.dataTransfer.getData('text')
+        const targetVal = event.target.textContent
+        const swapWithEmptyCell = targetVal === '' || fromVal === ''
+        if (swapWithEmptyCell) {
+          const nonEmptyCellIndices = this.cellIndices(parseInt(targetVal || fromVal))
+          this.tryMoveCell(nonEmptyCellIndices, this.emptyCellIndices)
+        }
+      }
+    },
     tryMoveCell ([fromI, fromJ], [toI, toJ]) {
       const min = 0
       const max = this.grid.length - 1
-      if (toI >= min && toI <= max && toJ >= min && toJ <= max) {
+      const noOverflow = toI >= min && toI <= max && toJ >= min && toJ <= max
+      const manhattanDistance = Math.abs(fromI - toI) + Math.abs(fromJ - toJ)
+      if (noOverflow && manhattanDistance === 1) {
         const tmp = this.grid[fromI][fromJ]
         Vue.set(this.grid[fromI], fromJ, this.grid[toI][toJ])
         Vue.set(this.grid[toI], toJ, tmp)
@@ -71,6 +84,14 @@ export default {
         default: throw new Error(`Invalid direction: ${direction}`)
       }
       this.tryMoveCell([fromI, fromJ], [toI, toJ])
+    },
+    cellIndices (value) {
+      for (let i = 0; i < this.grid.length; i++) {
+        const j = this.grid[i].indexOf(value)
+        if (j !== -1) {
+          return [i, j]
+        }
+      }
     },
     cellIdToIndices (id) {
       const i = (id < this.grid.length)
