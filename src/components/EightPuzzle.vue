@@ -1,16 +1,22 @@
 <template lang="pug">
-div.root
-  div.assignment
-    div.grid
-      div.row(v-for='row in grid')
-        div.cell(v-for='cell in row'
-          @drop.prevent='dropCell' @dragstart='dragCell(cell, $event)' @dragover.prevent='' draggable='true') {{cell}}
-    div.control
+.root
+  .assignment
+    .grid
+      .row(v-for='row in grid')
+        .cell(
+          v-for='cell in row'
+          draggable='true'
+          @dragstart='dragCell(cell)'
+          @dragover.prevent=''
+          @drop.prevent='dropCell(cell)'
+        ) {{cell !== emptyCell ? cell : ''}}
+    .control
       el-button(@click.prevent='shuffle' type='success' size='large') Shuffle
       el-button(@click.prevent='findSolution' type='primary' size='large' ) Find solution
 </template>
 <script>
 import Vue from 'vue'
+import _last from 'lodash-es/last'
 import { Button } from 'element-ui'
 
 const directions = {
@@ -26,13 +32,17 @@ export default {
       grid: [
         [1, 2, 3],
         [4, 5, 6],
-        [7, 8, null]
-      ]
+        [7, 8, 9]
+      ],
+      draggedCell: 0
     }
+  },
+  created () {
+    this.emptyCell = _last(_last(this.grid))
   },
   computed: {
     emptyCellIndices () {
-      return this.cellIndices(null)
+      return this.cellIndices(this.emptyCell)
     }
   },
   methods: {
@@ -44,23 +54,23 @@ export default {
 
       moves.forEach(m => this.tryMoveEmptyCell(m))
     },
-    dragCell (value, event) {
-      const text = (value != null) ? value : ''
-      event.dataTransfer.setData('text', text)
+    findSolution () {
+      console.log('TODO')
     },
-    dropCell (event) {
-      if (event.target.classList.contains('cell')) {
-        const fromVal = event.dataTransfer.getData('text')
-        const targetVal = event.target.textContent
-        const swapWithEmptyCell = targetVal === '' || fromVal === ''
-        if (swapWithEmptyCell) {
-          const nonEmptyCellIndices = this.cellIndices(parseInt(targetVal || fromVal))
-          const moved = this.tryMoveCell(nonEmptyCellIndices, this.emptyCellIndices)
-          if (!moved) {
-            console.log('Bad move')
-          }
+    dragCell (value) {
+      // TODO drag only if near empty
+      this.draggedCell = value
+    },
+    dropCell (targetCell) {
+      const isEmptyDragged = this.draggedCell === this.emptyCell
+      if (isEmptyDragged || targetCell === this.emptyCell) {
+        const nonEmptyCellIndices = this.cellIndices(isEmptyDragged ? targetCell : this.draggedCell)
+        const moved = this.tryMoveCell(nonEmptyCellIndices, this.emptyCellIndices)
+        if (!moved) {
+          console.log('Bad move')
         }
       }
+      this.draggedCell = 0
     },
     tryMoveCell ([fromI, fromJ], [toI, toJ]) {
       const min = 0
@@ -95,16 +105,6 @@ export default {
           return [i, j]
         }
       }
-    },
-    cellIdToIndices (id) {
-      const i = (id < this.grid.length)
-        ? 0
-        : (id < this.grid.length * 2) ? 1 : 2
-      const j = id % this.grid.length
-      return [i, j]
-    },
-    findSolution () {
-      console.log('TODO')
     }
   },
   components: {
