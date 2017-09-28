@@ -10,12 +10,13 @@
     "build": "node build/build.js",
     "unit": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run",
     "test": "npm run unit",
-    "lint:js": "eslint --ext .js,.vue src test/unit/specs",
+    "lint:js": "cross-env NODE_ENV=production eslint --ext .js,.vue src test/unit/specs",
     "lint:css": "stylelint \"src/**/*.css src/**/*.vue\"",
     "lint": "run-p lint:js lint:css",
     "precommit": "lint-staged"
   },
   "dependencies": {
+    "drag-drop-webkit-mobile": "^1.4.1",
     "element-ui": "^1.4.5",
     "lodash-es": "^4.17.4",
     "vue": "^2.4.2",
@@ -99,7 +100,7 @@
     "npm": ">= 3.0.0"
   },
   "browserslist": [
-    "last 1 Chrome version",
+    "last 1 IE version",
     "last 1 Firefox version",
     "last 1 Edge version",
     "last 1 Opera version",

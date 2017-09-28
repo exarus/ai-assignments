@@ -1,7 +1,10 @@
 import Vue from 'vue'
+import mobileDragDropShim from 'drag-drop-webkit-mobile'
 import 'element-ui/lib/theme-default/index.css'
 import App from './App'
 import router from './router'
+
+mobileDragDropShim()
 
 Vue.config.productionTip = false
 
