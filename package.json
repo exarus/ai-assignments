@@ -16,7 +16,6 @@
     "precommit": "lint-staged"
   },
   "dependencies": {
-    "drag-drop-webkit-mobile": "^1.4.1",
     "element-ui": "^1.4.6",
     "lodash-es": "^4.17.4",
     "vue": "^2.4.2",
@@ -68,6 +67,7 @@
     "karma-spec-reporter": "0.0.31",
     "karma-webpack": "^2.0.2",
     "lint-staged": "^4.2.3",
+    "mobile-drag-drop": "^2.2.0",
     "mocha": "^3.2.0",
     "npm-run-all": "^4.1.1",
     "opn": "^5.1.0",
