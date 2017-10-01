@@ -102,7 +102,7 @@
     "npm": ">= 5.0.0"
   },
   "browserslist": [
-    "last 1 IE version",
+    "last 2 Chrome version",
     "last 1 Firefox version",
     "last 1 Edge version",
     "last 1 Opera version",
