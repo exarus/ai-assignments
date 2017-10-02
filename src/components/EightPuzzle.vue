@@ -17,6 +17,7 @@
       el-button(@click.prevent='findSolution' type='primary' size='large' ) Find solution
 </template>
 
+<!--suppress JSPotentiallyInvalidTargetOfIndexedPropertyAccess -->
 <script>
 import { Button } from 'element-ui'
 import findSolution, { defaultGrid, emptyCell, cellIndices, manhattanDistance, swapCells } from '@/algorithms/8-puzzle-solution'
