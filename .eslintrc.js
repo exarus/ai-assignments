@@ -11,13 +11,13 @@ module.exports = {
   },
   // https://github.com/standard/standard/blob/master/docs/RULES-en.md
   extends: 'standard',
-  // required to lint *.vue files
   plugins: [
+    // required to lint *.vue files
     'html',
     'compat'
   ],
   // add your custom rules here
-  'rules': {
+  rules: {
     // allow paren-less arrow functions
     'arrow-parens': ['error', 'as-needed', { 'requireForBlockBody': true }],
     // allow debugger during development
