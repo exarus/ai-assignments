@@ -1,7 +1,7 @@
 ---
-'*.{css,sss,styl,vue}':
-  - stylelint --fix
-  - git add
+#'*.{css,sss,styl,vue}':
+#  - stylelint --fix --custom-syntax postcss-html
+#  - git add
 '*.{js,vue}':
   - eslint --fix
   - git add

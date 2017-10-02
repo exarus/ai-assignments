@@ -1,7 +1,5 @@
 ---
 extends: stylelint-config-standard
-processors:
-  - stylelint-processor-html
 rules:
   font-family-name-quotes: always-where-recommended
   function-url-quotes: always
