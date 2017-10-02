@@ -2,24 +2,24 @@
 .root
   .assignment
     .grid
-      .row(v-for='row in grid')
+      .row(v-for='row of grid')
         .cell(
-          v-for='cell in row'
-          :class='cellClassObject(cell)'
-          :draggable='isDraggable(cell).toString()'
-          @dragstart='dragCell(cell)'
-          @dragover.prevent=''
+          v-for='cell of row',
+          :class='cellClassObject(cell)',
+          :draggable='isDraggable(cell).toString()',
+          @dragstart='dragCell(cell)',
+          @dragover.prevent='',
+          @dragenter.prevent='',
           @drop.prevent='dropCell(cell)'
         ) {{cell !== emptyCell ? cell : ''}}
     .control
       el-button(@click.prevent='shuffle' type='success' size='large') Shuffle
       el-button(@click.prevent='findSolution' type='primary' size='large' ) Find solution
 </template>
+
 <script>
-import Vue from 'vue'
-import _last from 'lodash-es/last'
 import { Button } from 'element-ui'
-import { manhattanDistance } from '@/algorithms/8-puzzle-solution'
+import findSolution, { defaultGrid, emptyCell, cellIndices, manhattanDistance, swapCells } from '@/algorithms/8-puzzle-solution'
 
 const directions = {
   TOP: 0,
@@ -27,20 +27,21 @@ const directions = {
   BOTTOM: 2,
   LEFT: 3
 }
+const gridStorageKey = 'grid'
 
 export default {
   data () {
     return {
-      grid: [
-        [1, 2, 3],
-        [4, 5, 6],
-        [7, 8, 9]
-      ],
+      grid: defaultGrid,
       draggedCell: 0
     }
   },
   created () {
-    this.emptyCell = _last(_last(this.grid))
+    this.emptyCell = emptyCell
+    const savedGrid = localStorage.getItem(gridStorageKey)
+    if (savedGrid !== null) {
+      this.grid = JSON.parse(savedGrid)
+    }
   },
   computed: {
     emptyCellIndices () {
@@ -51,13 +52,15 @@ export default {
     shuffle () {
       const moveCount = 150
       const moveBuffer = new Uint8Array(moveCount)
-      crypto.getRandomValues(moveBuffer)
+      window.crypto.getRandomValues(moveBuffer)
       const moves = moveBuffer.map(i => i % Object.keys(directions).length)
 
-      moves.forEach(m => this.tryMoveEmptyCell(m))
+      moves.forEach(m => this.moveEmptyCell(m))
+      this.saveGrid()
     },
     findSolution () {
-      console.log('TODO')
+      const solution = findSolution(this.grid)
+      console.log(solution)
     },
     dragCell (cell) {
       this.draggedCell = cell
@@ -66,10 +69,8 @@ export default {
       const isEmptyDragged = this.draggedCell === this.emptyCell
       if (isEmptyDragged || targetCell === this.emptyCell) {
         const nonEmptyCellIndices = this.cellIndices(isEmptyDragged ? targetCell : this.draggedCell)
-        const moved = this.tryMoveCell(nonEmptyCellIndices, this.emptyCellIndices)
-        if (!moved) {
-          console.log('Bad move')
-        }
+        this.swapCells(nonEmptyCellIndices, this.emptyCellIndices)
+        this.saveGrid()
       }
       this.draggedCell = 0
     },
@@ -82,39 +83,30 @@ export default {
         'non-selectable': !this.isDraggable(cell)
       }
     },
-    tryMoveCell ([fromI, fromJ], [toI, toJ]) {
-      const min = 0
-      const max = this.grid.length - 1
-      const noOverflow = toI >= min && toI <= max && toJ >= min && toJ <= max
-      const manhattanDistance = Math.abs(fromI - toI) + Math.abs(fromJ - toJ)
-      if (noOverflow && manhattanDistance === 1) {
-        const tmp = this.grid[fromI][fromJ]
-        Vue.set(this.grid[fromI], fromJ, this.grid[toI][toJ])
-        Vue.set(this.grid[toI], toJ, tmp)
-        return true
-      }
-      return false
-    },
-    tryMoveEmptyCell (direction) {
-      const [fromI, fromJ] = this.emptyCellIndices
-      let toI = fromI
-      let toJ = fromJ
+    moveEmptyCell (direction) {
+      let toX = this.emptyCellIndices[0]
+      let toY = this.emptyCellIndices[1]
       switch (direction) {
-        case directions.TOP: --toI; break
-        case directions.BOTTOM: ++toI; break
-        case directions.LEFT: --toJ; break
-        case directions.RIGHT: ++toJ; break
+        case directions.TOP: --toX; break
+        case directions.BOTTOM: ++toX; break
+        case directions.LEFT: --toY; break
+        case directions.RIGHT: ++toY; break
         default: throw new Error(`Invalid direction: ${direction}`)
       }
-      this.tryMoveCell([fromI, fromJ], [toI, toJ])
+      const max = this.grid.length - 1
+      if (toX >= 0 && toX <= max && toY >= 0 && toY <= max) {
+        this.swapCells(this.emptyCellIndices, [toX, toY])
+      }
     },
     cellIndices (cell) {
-      for (let i = 0; i < this.grid.length; i++) {
-        const j = this.grid[i].indexOf(cell)
-        if (j !== -1) {
-          return [i, j]
-        }
-      }
+      return cellIndices(this.grid, cell)
+    },
+    swapCells (c1, c2) {
+      swapCells(this.grid, c1, c2)
+      this.grid.splice(this.grid.length) // triggers rerender
+    },
+    saveGrid () {
+      localStorage.setItem(gridStorageKey, JSON.stringify(this.grid))
     }
   },
   components: {
