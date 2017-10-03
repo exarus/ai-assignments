@@ -1,0 +1,38 @@
+import append from 'ramda/src/append'
+import { isSolved, possibleMoves } from '@/algorithms/8-puzzle/heuristics'
+
+const ldfs = (grid, test, depthLimit = 1, stack = []) => {
+  if (test(grid)) {
+    return { result: stack }
+  } else if (stack.length === depthLimit) {
+    return { cutOff: true }
+  } else {
+    const searchResults = possibleMoves(grid)
+      .map(move => ldfs(move.grid, test, depthLimit, append(move, stack)))
+    if (searchResults.length === 0) {
+      return { failure: true }
+    }
+
+    const filteredResults = searchResults.filter(({ cutOff }) => !cutOff)
+    if (filteredResults.length === 0) {
+      return { cutOff: true }
+    }
+
+    return filteredResults.reduce((min, cur) => {
+      return cur.result.length < min.result.length ? cur : min
+    })
+  }
+}
+
+export default (grid) => {
+  for (let limit = 1; limit < 13; limit++) {
+    const result = ldfs(grid, isSolved, limit)
+    process.env.NODE_ENV !== 'production' && console.log(limit)
+    if (result.failure) {
+      return new Error('There is no solution!')
+    } else if (!result.cutOff) {
+      return result.result
+    }
+  }
+  return new Error('Computation will take too long')
+}

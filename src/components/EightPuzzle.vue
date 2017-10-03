@@ -20,7 +20,8 @@
 <!--suppress JSPotentiallyInvalidTargetOfIndexedPropertyAccess -->
 <script>
 import { Button } from 'element-ui'
-import findSolution, { defaultGrid, emptyCell, cellIndices, manhattanDistance, swapCells } from '@/algorithms/8-puzzle-solution'
+import { defaultGrid, emptyCell, cellIndices, manhattanDistance, swapCells } from '@/algorithms/8-puzzle/util'
+import depthLimitedSearch from '@/algorithms/8-puzzle/depthLimitedSearch'
 
 const directions = {
   TOP: 0,
@@ -60,7 +61,7 @@ export default {
       this.saveGrid()
     },
     findSolution () {
-      const solution = findSolution(this.grid)
+      const solution = depthLimitedSearch(this.grid)
       console.log(solution)
     },
     dragCell (cell) {
