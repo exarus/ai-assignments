@@ -20,8 +20,9 @@
 <!--suppress JSPotentiallyInvalidTargetOfIndexedPropertyAccess -->
 <script>
 import { Button } from 'element-ui'
+import clone from 'ramda/src/clone'
 import { defaultGrid, emptyCell, cellIndices, manhattanDistance, swapCells } from '@/algorithms/8-puzzle/util'
-import depthLimitedSearch from '@/algorithms/8-puzzle/depthLimitedSearch'
+import findSolution from '@/algorithms/8-puzzle/aStarSearch'
 
 const directions = {
   TOP: 0,
@@ -52,16 +53,17 @@ export default {
   },
   methods: {
     shuffle () {
-      const moveCount = 150
+      const moveCount = 12
       const moveBuffer = new Uint8Array(moveCount)
       window.crypto.getRandomValues(moveBuffer)
-      const moves = moveBuffer.map(i => i % Object.keys(directions).length)
 
+      const moves = moveBuffer.map(i => i % Object.keys(directions).length)
+      this.grid = clone(defaultGrid)
       moves.forEach(m => this.moveEmptyCell(m))
       this.saveGrid()
     },
     findSolution () {
-      const solution = depthLimitedSearch(this.grid)
+      const solution = findSolution(this.grid)
       console.log(solution)
     },
     dragCell (cell) {
