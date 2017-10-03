@@ -17,13 +17,7 @@
       },
       "useBuiltIns": "usage"
     }],
-    "stage-2"
+    "stage-3"
   ],
-  "plugins": ["transform-runtime"],
-  "env": {
-    "test": {
-      "presets": ["env", "stage-2"],
-      "plugins": ["istanbul"]
-    }
-  }
+  "plugins": ["transform-runtime"]
 }
