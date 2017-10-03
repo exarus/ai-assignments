@@ -73,6 +73,6 @@
     </LinkMapSettings>
   </component>
   <component name="WebPackConfiguration">
-    <option name="path" value="$PROJECT_DIR$/build/webpack.prod.conf.js" />
+    <option name="path" value="$PROJECT_DIR$/build/webpack.dev.conf.js" />
   </component>
 </project>
