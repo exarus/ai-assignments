@@ -1,9 +1,14 @@
 import append from 'ramda/src/append'
+import minBy from 'ramda/src/minBy'
 import { isSolved, possibleMoves } from '@/algorithms/8-puzzle/heuristics'
 
 const ldfs = (grid, test, depthLimit = 1, stack = []) => {
   if (test(grid)) {
-    return { result: stack }
+    return {
+      result: stack.map(
+        ({ from, to }) => ({ from, to })
+      )
+    }
   } else if (stack.length === depthLimit) {
     return { cutOff: true }
   } else {
@@ -18,9 +23,7 @@ const ldfs = (grid, test, depthLimit = 1, stack = []) => {
       return { cutOff: true }
     }
 
-    return filteredResults.reduce((min, cur) => {
-      return cur.result.length < min.result.length ? cur : min
-    })
+    return filteredResults.reduce(minBy(r => r.result.length))
   }
 }
 

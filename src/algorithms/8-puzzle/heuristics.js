@@ -22,23 +22,23 @@ export const possibleMoves = (grid) => {
   const emptyCell = cellIndices(grid, emptyCellValue)
   const [x, y] = emptyCell
   const maxIndex = grid.length - 1
-  const movedCells = []
+  const movableCells = []
   if (x !== 0) {
-    movedCells.push([x - 1, y])
+    movableCells.push([x - 1, y])
   }
   if (x !== maxIndex) {
-    movedCells.push([x + 1, y])
+    movableCells.push([x + 1, y])
   }
   if (y !== 0) {
-    movedCells.push([x, y - 1])
+    movableCells.push([x, y - 1])
   }
   if (y !== maxIndex) {
-    movedCells.push([x, y + 1])
+    movableCells.push([x, y + 1])
   }
-  return movedCells.map(movedCell => ({
-    from: movedCell,
+  return movableCells.map(movableCell => ({
+    from: movableCell,
     to: emptyCell,
-    grid: withSwappedCells(grid, movedCell, emptyCell)
+    grid: withSwappedCells(grid, movableCell, emptyCell)
   }))
 }
 
