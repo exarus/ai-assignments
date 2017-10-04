@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Hello from '@/components/Hello'
+import Navigation from '@/components/Navigation'
 import EightPuzzle from '@/components/EightPuzzle'
 
 Vue.use(Router)
@@ -9,8 +9,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Hello',
-      component: Hello
+      name: 'Navigation',
+      component: Navigation
     },
     {
       path: '/8-puzzle',
