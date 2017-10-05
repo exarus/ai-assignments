@@ -17,11 +17,12 @@
       el-button(@click.prevent='findSolution' type='primary' size='large' ) Find solution
 </template>
 
-<!--suppress JSPotentiallyInvalidTargetOfIndexedPropertyAccess -->
+<!--suppress JSPotentiallyInvalidTargetOfIndexedPropertyAccess, JSUnresolvedVariable -->
 <script>
 import { Button } from 'element-ui'
-import clone from 'ramda/src/clone'
-import { defaultGrid, emptyCell, cellIndices, manhattanDistance, swapCells } from '@/algorithms/8-puzzle/util'
+import {
+  defaultGrid, emptyCellValue, emptyCellIndices, cellIndices, manhattanDistance, swapCells, shuffledGrid
+} from '@/algorithms/8-puzzle/util'
 import findSolution from '@/algorithms/8-puzzle/aStarSearch'
 
 const directions = {
@@ -40,7 +41,7 @@ export default {
     }
   },
   created () {
-    this.emptyCell = emptyCell
+    this.emptyCell = emptyCellValue
     const savedGrid = localStorage.getItem(gridStorageKey)
     if (savedGrid !== null) {
       this.grid = JSON.parse(savedGrid)
@@ -48,18 +49,12 @@ export default {
   },
   computed: {
     emptyCellIndices () {
-      return this.cellIndices(this.emptyCell)
+      return emptyCellIndices(this.grid)
     }
   },
   methods: {
     shuffle () {
-      const moveCount = 12
-      const moveBuffer = new Uint8Array(moveCount)
-      window.crypto.getRandomValues(moveBuffer)
-
-      const moves = moveBuffer.map(i => i % Object.keys(directions).length)
-      this.grid = clone(defaultGrid)
-      moves.forEach(m => this.moveEmptyCell(m))
+      this.grid = shuffledGrid(12)
       this.saveGrid()
     },
     findSolution () {
@@ -70,8 +65,8 @@ export default {
       this.draggedCell = cell
     },
     dropCell (targetCell) {
-      const isEmptyDragged = this.draggedCell === this.emptyCell
-      if (isEmptyDragged || targetCell === this.emptyCell) {
+      const isEmptyDragged = this.draggedCell === this.emptyCellValue
+      if (isEmptyDragged || targetCell === this.emptyCellValue) {
         const nonEmptyCellIndices = this.cellIndices(isEmptyDragged ? targetCell : this.draggedCell)
         this.swapCells(nonEmptyCellIndices, this.emptyCellIndices)
         this.saveGrid()

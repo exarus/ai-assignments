@@ -2,8 +2,7 @@ import append from 'ramda/src/append'
 import pipe from 'ramda/src/pipe'
 import curry from 'ramda/src/curry'
 import minBy from 'ramda/src/minBy'
-import { displacedCells, isSolved, possibleMoves } from '@/algorithms/8-puzzle/heuristics'
-import { defaultGrid } from '@/algorithms/8-puzzle/util'
+import { displacedCells, isSolved, defaultGrid, possibleMoves } from '@/algorithms/8-puzzle/heuristics'
 
 const estimatedCost = curry(
   (costToState, costToEnd, goalState, initialState, state) => (

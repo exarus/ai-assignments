@@ -5,7 +5,7 @@ import flatten from 'ramda/src/flatten'
 import sum from 'ramda/src/sum'
 import update from 'ramda/src/update'
 import zipWith from 'ramda/src/zipWith'
-import { cellIndices, defaultGrid, emptyCell as emptyCellValue } from '@/algorithms/8-puzzle/util'
+import { emptyCellIndices, defaultGrid } from '@/algorithms/8-puzzle/util'
 
 export const displacedCells = (grid) => {
   const displaced = zipWith(
@@ -18,24 +18,30 @@ export const displacedCells = (grid) => {
 
 export const isSolved = grid => equals(grid, defaultGrid)
 
-export const possibleMoves = (grid) => {
-  const emptyCell = cellIndices(grid, emptyCellValue)
+export const emptyCellNeighbors = (grid) => {
+  const emptyCell = emptyCellIndices(grid)
   const [x, y] = emptyCell
   const maxIndex = grid.length - 1
-  const movableCells = []
+  const neighbors = []
   if (x !== 0) {
-    movableCells.push([x - 1, y])
+    neighbors.push([x - 1, y])
   }
   if (x !== maxIndex) {
-    movableCells.push([x + 1, y])
+    neighbors.push([x + 1, y])
   }
   if (y !== 0) {
-    movableCells.push([x, y - 1])
+    neighbors.push([x, y - 1])
   }
   if (y !== maxIndex) {
-    movableCells.push([x, y + 1])
+    neighbors.push([x, y + 1])
   }
-  return movableCells.map(movableCell => ({
+  return neighbors
+}
+
+export const possibleMoves = (grid) => {
+  const emptyCell = emptyCellIndices(grid)
+  const neighbors = emptyCellNeighbors(grid)
+  return neighbors.map(movableCell => ({
     from: movableCell,
     to: emptyCell,
     grid: withSwappedCells(grid, movableCell, emptyCell)
@@ -57,3 +63,5 @@ const withSwappedCells = (grid, [x1, y1], [x2, y2]) => {
     )
   return applySwap(grid)
 }
+
+export { defaultGrid } from './util'

@@ -1,4 +1,7 @@
+import clone from 'ramda/src/clone'
 import last from 'ramda/src/last'
+import { pickRandom } from '@/util/random'
+import { emptyCellNeighbors } from '@/algorithms/8-puzzle/heuristics'
 
 export const defaultGrid = [
   [1, 2, 3],
@@ -6,7 +9,7 @@ export const defaultGrid = [
   [7, 8, 9]
 ]
 
-export const emptyCell = last(last(defaultGrid))
+export const emptyCellValue = last(last(defaultGrid))
 
 export const manhattanDistance = ([x1, y1], [x2, y2]) => Math.abs(x1 - x2) + Math.abs(y2 - y1)
 
@@ -30,4 +33,18 @@ export const cellIndices = (grid, cell) => {
       return [i, j]
     }
   }
+}
+
+export const emptyCellIndices = (grid) => {
+  return cellIndices(grid, emptyCellValue)
+}
+
+export const shuffledGrid = (moveCount) => {
+  const grid = clone(defaultGrid)
+  for (let i = 0; i < moveCount; i++) {
+    const neighbors = emptyCellNeighbors(grid)
+    const randomNeighbor = pickRandom(...neighbors)
+    swapCells(grid, emptyCellIndices(grid), randomNeighbor)
+  }
+  return grid
 }

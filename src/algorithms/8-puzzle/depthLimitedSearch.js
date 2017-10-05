@@ -2,7 +2,7 @@ import append from 'ramda/src/append'
 import minBy from 'ramda/src/minBy'
 import { isSolved, possibleMoves } from '@/algorithms/8-puzzle/heuristics'
 
-const ldfs = (grid, test, depthLimit = 1, stack = []) => {
+const depthLimitedSearch = (grid, test, depthLimit = 1, stack = []) => {
   if (test(grid)) {
     return {
       result: stack.map(
@@ -13,7 +13,7 @@ const ldfs = (grid, test, depthLimit = 1, stack = []) => {
     return { cutOff: true }
   } else {
     const searchResults = possibleMoves(grid)
-      .map(move => ldfs(move.grid, test, depthLimit, append(move, stack)))
+      .map(move => depthLimitedSearch(move.grid, test, depthLimit, append(move, stack)))
     if (searchResults.length === 0) {
       return { failure: true }
     }
@@ -29,7 +29,7 @@ const ldfs = (grid, test, depthLimit = 1, stack = []) => {
 
 export default (grid) => {
   for (let limit = 1; limit < 13; limit++) {
-    const result = ldfs(grid, isSolved, limit)
+    const result = depthLimitedSearch(grid, isSolved, limit)
     process.env.NODE_ENV !== 'production' && console.log(limit)
     if (result.failure) {
       return new Error('There is no solution!')
