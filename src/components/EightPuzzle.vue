@@ -54,7 +54,7 @@ export default {
   },
   methods: {
     shuffle () {
-      this.grid = shuffledGrid(12)
+      this.grid = shuffledGrid(33)
       this.saveGrid()
     },
     findSolution () {
