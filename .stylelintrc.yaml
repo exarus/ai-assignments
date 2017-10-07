@@ -1,8 +1,12 @@
 ---
 extends: stylelint-config-standard
 rules:
+  # https://www.w3.org/TR/CSS21/fonts.html#propdef-font-family
+  # https://drafts.csswg.org/css-fonts-3/#propdef-font-family
   font-family-name-quotes: always-where-recommended
-  function-url-quotes: always
+  function-url-quotes: # https://www.w3.org/TR/css3-values/#urls
+    - always
+    - except: [empty]
   selector-attribute-quotes: always # https://mathiasbynens.be/notes/unquoted-attribute-values
   string-quotes: single
 
