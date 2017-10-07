@@ -1,7 +1,6 @@
 <template lang="pug">
 .navigation
-  <!--suppress HtmlUnknownTarget -->
-  img(src='~@/assets/ai.svg')
+  img(src="~@/assets/ai.svg")
   h1 Welcome to the world of artificial intelligence
   h2 Works
   ul
@@ -24,7 +23,9 @@
 </template>
 
 <script>
-export default {}
+export default {
+  name: 'GlobalNavigation'
+}
 </script>
 
 <style scoped>
@@ -38,30 +39,30 @@ export default {}
 
 .author {
   font-size: 40px;
-}
 
-i {
-  margin: 0 0.5em
-}
+  & i {
+    margin: 0 0.5em;
+  }
 
-.fa-github {
-  color: #000000;
-}
+  & .fa-github {
+    color: #000;
+  }
 
-.fa-facebook-official {
-  color: #415896;
-}
+  & .fa-facebook-official {
+    color: #415896;
+  }
 
-.fa-linkedin-square {
-  color: #2675b3;
-}
+  & .fa-linkedin-square {
+    color: #2675b3;
+  }
 
-.fa-twitter {
-  color: #1da1f2;
-}
+  & .fa-twitter {
+    color: #1da1f2;
+  }
 
-.fa-telegram {
-  color: #2f83d5;
+  & .fa-telegram {
+    color: #2f83d5;
+  }
 }
 
 h1,

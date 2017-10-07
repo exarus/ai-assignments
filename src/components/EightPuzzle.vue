@@ -5,7 +5,7 @@
       .row(v-for='row of grid')
         .cell(
           v-for='cell of row',
-          :class='cellClassObject(cell)',
+          :class='{ immovable: !isDraggable(cell) }',
           :draggable='isDraggable(cell).toString()',
           @dragstart='dragCell(cell)',
           @dragover.prevent='',
@@ -25,12 +25,6 @@ import {
 } from '@/algorithms/8-puzzle/util'
 import findSolution from '@/algorithms/8-puzzle/aStarSearch'
 
-const directions = {
-  TOP: 0,
-  RIGHT: 1,
-  BOTTOM: 2,
-  LEFT: 3
-}
 const gridStorageKey = 'grid'
 
 export default {
@@ -69,7 +63,6 @@ export default {
       if (isEmptyDragged || targetCell === this.emptyCellValue) {
         const nonEmptyCellIndices = this.cellIndices(isEmptyDragged ? targetCell : this.draggedCell)
         this.swapCells(nonEmptyCellIndices, this.emptyCellIndices)
-        this.saveGrid()
       }
       this.draggedCell = 0
     },
@@ -77,32 +70,13 @@ export default {
       const distance = manhattanDistance(this.cellIndices(cell), this.emptyCellIndices)
       return distance === 1
     },
-    cellClassObject (cell) {
-      return {
-        'non-selectable': !this.isDraggable(cell)
-      }
-    },
-    moveEmptyCell (direction) {
-      let toX = this.emptyCellIndices[0]
-      let toY = this.emptyCellIndices[1]
-      switch (direction) {
-        case directions.TOP: --toX; break
-        case directions.BOTTOM: ++toX; break
-        case directions.LEFT: --toY; break
-        case directions.RIGHT: ++toY; break
-        default: throw new Error(`Invalid direction: ${direction}`)
-      }
-      const max = this.grid.length - 1
-      if (toX >= 0 && toX <= max && toY >= 0 && toY <= max) {
-        this.swapCells(this.emptyCellIndices, [toX, toY])
-      }
-    },
     cellIndices (cell) {
       return cellIndices(this.grid, cell)
     },
     swapCells (c1, c2) {
       swapCells(this.grid, c1, c2)
       this.grid.splice(this.grid.length) // triggers rerender
+      this.saveGrid()
     },
     saveGrid () {
       localStorage.setItem(gridStorageKey, JSON.stringify(this.grid))
@@ -113,57 +87,66 @@ export default {
   }
 }
 </script>
-<style lang="stylus" scoped>
-.root
-  color #5e6d82
-  font-size 3.6vmin
-  display flex
-  justify-content center
-  align-items center
+<style scoped>
+.root {
+  color: #5e6d82;
+  font-size: 3.6vmin;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-  > .assignment
-    display flex
-    flex-flow column
-    justify-content space-evenly
-    align-items center
+  & > .assignment {
+    display: flex;
+    flex-flow: column;
+    justify-content: space-evenly;
+    align-items: center;
 
-    > .grid
-      background #e6eefb
-      border 0.8vmin solid #c3c3c3
-      display flex
-      flex-flow column
-      justify-content space-evenly
-      /*align-items center*/
-      height 74.2vmin
-      width 74.2vmin
+    & > .grid {
+      background: #e6eefb;
+      border: 0.8vmin solid #c3c3c3;
+      display: flex;
+      flex-flow: column;
+      justify-content: space-evenly;
 
-      > .row
-        display flex
-        justify-content space-evenly
-        align-items center
+      /* align-items: center; */
+      height: 74.2vmin;
+      width: 74.2vmin;
 
-        > .cell
-          border 0.8vmin solid #c3c3c3 /*#2b2b2b*/
-          margin -0.8vmin
-          display flex
-          justify-content center
-          align-items center
-          width: 24.2vmin
-          height 24.2vmin
-          font-size: min(4em, 24.2vmin)
+      & > .row {
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
 
-          &.non-selectable
-            user-select none
+        & > .cell {
+          border: 0.8vmin solid #c3c3c3;
+          margin: -0.8vmin;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 24.2vmin;
+          height: 24.2vmin;
+          font-size: 4em;
 
-    > .control
-      width 74.2vmin
-      margin 1vmin
-      display inline-flex
-      justify-content space-evenly
-      align-items center
+          &.immovable {
+            user-select: none;
+          }
+        }
+      }
+    }
 
-      > button
-        flex: 50%
-        max-width 37vmin
-        font-size max(1rem, 1.33em)
+    & > .control {
+      width: 74.2vmin;
+      margin: 1vmin;
+      display: inline-flex;
+      justify-content: space-evenly;
+      align-items: center;
+
+      & > button {
+        flex: 50%;
+        max-width: 37vmin;
+        font-size: 1.33em;
+      }
+    }
+  }
+}
 </style>
