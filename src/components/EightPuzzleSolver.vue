@@ -8,17 +8,13 @@
 </template>
 
 <script>
-import ElButton from 'element-ui/packages/button/src/button'
 import EightPuzzle from '@/components/EightPuzzle'
 import { shuffledGrid } from '@/util/8-puzzle'
 import findSolution from '@/ai/8-puzzle/aStarSearch'
 
 export default {
   name: 'EightPuzzleSolver',
-  components: {
-    ElButton,
-    EightPuzzle
-  },
+  components: { EightPuzzle },
   data () {
     return {
       grid: null

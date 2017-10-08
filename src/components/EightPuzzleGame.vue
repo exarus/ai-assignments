@@ -20,8 +20,6 @@
 </template>
 
 <script>
-import ElButton from 'element-ui/packages/button/src/button'
-import ElDialog from 'element-ui/packages/dialog/src/component'
 import EightPuzzle from '@/components/EightPuzzle'
 import { shuffledGrid } from '@/util/8-puzzle'
 
@@ -29,11 +27,7 @@ const gameInProgressStorageKey = 'gameInProgress'
 
 export default {
   name: 'EightPuzzleGame',
-  components: {
-    ElButton,
-    ElDialog,
-    EightPuzzle
-  },
+  components: { EightPuzzle },
   data () {
     const storedInProgress = localStorage.getItem(gameInProgressStorageKey)
     return {

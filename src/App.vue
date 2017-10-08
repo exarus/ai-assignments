@@ -15,7 +15,6 @@ export default {
 
 <style>
 @import '~mobile-drag-drop/default.css';
-@import '~element-ui/lib/theme-chalk/index.css';
 
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
