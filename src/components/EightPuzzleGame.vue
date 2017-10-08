@@ -8,12 +8,13 @@
     .control
       el-button(v-if='gameInProgress', @click='startNewGame' type='warning' size='large') Restart
       el-button(v-else @click='startNewGame' type='primary' size='large') Start Game
-  el-dialog.win-dialog(
-    title='You won!'
+  el-dialog(
+    title='You won!',
+    :width='dialogWidth()'
     center
     :visible.sync='winNotificationVisible'
   )
-    span Do you want to start a new game?
+    .restart-question Do you want to start a new game?
     span(slot='footer')
       el-button(@click='finishGame') Cancel
       el-button(type='primary', @click='startNewGame') Confirm
@@ -32,7 +33,7 @@ export default {
     const storedInProgress = localStorage.getItem(gameInProgressStorageKey)
     return {
       grid: null,
-      gameInProgress: storedInProgress !== null ? storedInProgress : false,
+      gameInProgress: storedInProgress !== null ? JSON.parse(storedInProgress) : false,
       winNotificationVisible: false
     }
   },
@@ -56,6 +57,9 @@ export default {
     finishGame () {
       this.winNotificationVisible = false
       this.gameInProgress = false
+    },
+    dialogWidth () {
+      return window.innerWidth > 1130 ? '30%' : '339px'
     }
   }
 }
@@ -90,8 +94,10 @@ export default {
     }
   }
 
-  & .win-dialog {
-    text-align: center;
+  & .restart-question {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
 </style>
