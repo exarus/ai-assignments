@@ -14,7 +14,7 @@
     "precommit": "lint-staged"
   },
   "dependencies": {
-    "element-ui": "^1.4.6",
+    "element-ui": "^2.0.0-alpha.2",
     "mobile-drag-drop": "^2.2.0",
     "ramda": "^0.24.1",
     "vue": "^2.4.2",

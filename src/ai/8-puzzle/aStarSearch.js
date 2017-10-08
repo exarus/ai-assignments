@@ -1,14 +1,7 @@
 import append from 'ramda/src/append'
 import pipe from 'ramda/src/pipe'
-import curry from 'ramda/src/curry'
 import minBy from 'ramda/src/minBy'
-import { displacedCells, isSolved, defaultGrid, possibleMoves } from '@/algorithms/8-puzzle/heuristics'
-
-const estimatedCost = curry(
-  (costToState, costToEnd, goalState, initialState, state) => (
-    Math.abs(costToState(state) - costToState(initialState)) + costToEnd(state) - costToEnd(goalState)
-  )
-)
+import { displacedCells, isSolved, defaultGrid, possibleMoves, estimatedCost } from '@/ai/8-puzzle/heuristics'
 
 const costToState = node => node.ancestors.length
 
@@ -28,7 +21,7 @@ export default (initGrid) => {
     cost: puzzleEstimatedCost(initState)
   }
   while (true) {
-    process.env.NODE_ENV !== 'production' && console.log(curNode)
+    process.env.NODE_ENV !== 'production' && console.log({ depth: curNode.ancestors.length, cost: curNode.cost })
     if (isSolved(curNode.grid)) {
       return nodeToMoves(curNode)
     }

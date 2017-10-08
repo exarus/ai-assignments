@@ -1,7 +1,7 @@
 import clone from 'ramda/src/clone'
 import last from 'ramda/src/last'
 import { pickRandom } from '@/util/random'
-import { emptyCellNeighbors } from '@/algorithms/8-puzzle/heuristics'
+import { emptyCellNeighbors } from '@/ai/8-puzzle/heuristics'
 
 export const defaultGrid = [
   [1, 2, 3],

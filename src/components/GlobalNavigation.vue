@@ -5,8 +5,11 @@
   h2 Works
   ul
     li
-      router-link(to='/8-puzzle') 8-Puzzle Problem
+      router-link(to='/ai/8-puzzle') 8-Puzzle Problem
+  h2 GameDev
+  ul
     li
+      router-link(to='/game-dev/8-puzzle') 8-Puzzle Game
   h2 Contact me
   ul.author
     li
@@ -45,7 +48,7 @@ export default {
   }
 
   & .fa-github {
-    color: #000;
+    color: black;
   }
 
   & .fa-facebook-official {

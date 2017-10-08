@@ -1,66 +1,72 @@
 <template lang="pug">
-.root
-  .assignment
-    .grid
-      .row(v-for='row of grid')
-        .cell(
-          v-for='cell of row',
-          :class='{ immovable: !isDraggable(cell) }',
-          :draggable='isDraggable(cell).toString()',
-          @dragstart='dragCell(cell)',
-          @dragover.prevent='',
-          @dragenter.prevent='',
-          @drop.prevent='dropCell(cell)'
-        ) {{cell !== emptyCell ? cell : ''}}
-    .control
-      el-button(@click.prevent='shuffle' type='success' size='large') Shuffle
-      el-button(@click.prevent='findSolution' type='primary' size='large' ) Find solution
+.grid
+  .row(v-for='row of grid')
+    .cell(
+      v-for='cell of row',
+      :key='cell',
+      :class='{ immovable: !isDraggable(cell) }',
+      :draggable='isDraggable(cell).toString()',
+      @dragstart='dragCell(cell)',
+      @dragover.prevent='',
+      @dragenter.prevent='',
+      @drop.prevent='dropCell(cell)'
+    ) {{cell !== emptyCell ? cell : ''}}
 </template>
 
 <!--suppress JSPotentiallyInvalidTargetOfIndexedPropertyAccess, JSUnresolvedVariable -->
 <script>
-import { Button } from 'element-ui'
-import {
-  defaultGrid, emptyCellValue, emptyCellIndices, cellIndices, manhattanDistance, swapCells, shuffledGrid
-} from '@/algorithms/8-puzzle/util'
-import findSolution from '@/algorithms/8-puzzle/aStarSearch'
+import clone from 'ramda/src/clone'
+import equals from 'ramda/src/equals'
+import { defaultGrid, emptyCellValue, emptyCellIndices, cellIndices, manhattanDistance, swapCells } from '@/util/8-puzzle'
 
 const gridStorageKey = 'grid'
 
 export default {
+  name: 'EightPuzzle',
+  props: {
+    initialGrid: Array
+  },
   data () {
+    let grid
+    if (this.initialGrid != null) {
+      grid = clone(this.initialGrid)
+    } else {
+      const savedGrid = localStorage.getItem(gridStorageKey)
+      grid = savedGrid !== null
+        ? JSON.parse(savedGrid)
+        : defaultGrid
+    }
     return {
-      grid: defaultGrid,
+      grid,
       draggedCell: 0
     }
   },
   created () {
     this.emptyCell = emptyCellValue
-    const savedGrid = localStorage.getItem(gridStorageKey)
-    if (savedGrid !== null) {
-      this.grid = JSON.parse(savedGrid)
-    }
   },
   computed: {
     emptyCellIndices () {
       return emptyCellIndices(this.grid)
     }
   },
+  watch: {
+    initialGrid (newGrid) {
+      this.grid = clone(newGrid)
+    },
+    grid (newGrid) {
+      if (equals(newGrid, defaultGrid)) {
+        this.$emit('ordered')
+      }
+      localStorage.setItem(gridStorageKey, JSON.stringify(newGrid))
+    }
+  },
   methods: {
-    shuffle () {
-      this.grid = shuffledGrid(33)
-      this.saveGrid()
-    },
-    findSolution () {
-      const solution = findSolution(this.grid)
-      console.log(solution)
-    },
     dragCell (cell) {
       this.draggedCell = cell
     },
     dropCell (targetCell) {
-      const isEmptyDragged = this.draggedCell === this.emptyCellValue
-      if (isEmptyDragged || targetCell === this.emptyCellValue) {
+      const isEmptyDragged = this.draggedCell === this.emptyCell
+      if (isEmptyDragged || targetCell === this.emptyCell) {
         const nonEmptyCellIndices = this.cellIndices(isEmptyDragged ? targetCell : this.draggedCell)
         this.swapCells(nonEmptyCellIndices, this.emptyCellIndices)
       }
@@ -76,75 +82,40 @@ export default {
     swapCells (c1, c2) {
       swapCells(this.grid, c1, c2)
       this.grid.splice(this.grid.length) // triggers rerender
-      this.saveGrid()
-    },
-    saveGrid () {
-      localStorage.setItem(gridStorageKey, JSON.stringify(this.grid))
     }
-  },
-  components: {
-    [Button.name]: Button
   }
 }
 </script>
 <style scoped>
-.root {
-  color: #5e6d82;
+.grid {
+  background: #e6eefb;
   font-size: 3.6vmin;
+  border: 0.8vmin solid #c3c3c3;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-flow: column;
+  justify-content: space-evenly;
 
-  & > .assignment {
+  /* align-items: center; */
+  height: 74.2vmin;
+  width: 74.2vmin;
+
+  & > .row {
     display: flex;
-    flex-flow: column;
     justify-content: space-evenly;
     align-items: center;
 
-    & > .grid {
-      background: #e6eefb;
+    & > .cell {
       border: 0.8vmin solid #c3c3c3;
+      margin: -0.8vmin;
       display: flex;
-      flex-flow: column;
-      justify-content: space-evenly;
-
-      /* align-items: center; */
-      height: 74.2vmin;
-      width: 74.2vmin;
-
-      & > .row {
-        display: flex;
-        justify-content: space-evenly;
-        align-items: center;
-
-        & > .cell {
-          border: 0.8vmin solid #c3c3c3;
-          margin: -0.8vmin;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          width: 24.2vmin;
-          height: 24.2vmin;
-          font-size: 4em;
-
-          &.immovable {
-            user-select: none;
-          }
-        }
-      }
-    }
-
-    & > .control {
-      width: 74.2vmin;
-      margin: 1vmin;
-      display: inline-flex;
-      justify-content: space-evenly;
+      justify-content: center;
       align-items: center;
+      width: 24.2vmin;
+      height: 24.2vmin;
+      font-size: 4em;
 
-      & > button {
-        flex: 50%;
-        max-width: 37vmin;
-        font-size: 1.33em;
+      &.immovable {
+        user-select: none;
       }
     }
   }

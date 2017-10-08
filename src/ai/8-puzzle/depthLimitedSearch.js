@@ -1,6 +1,6 @@
 import append from 'ramda/src/append'
 import minBy from 'ramda/src/minBy'
-import { isSolved, possibleMoves } from '@/algorithms/8-puzzle/heuristics'
+import { isSolved, possibleMoves } from '@/ai/8-puzzle/heuristics'
 
 const depthLimitedSearch = (grid, test, depthLimit = 1, stack = []) => {
   if (test(grid)) {
