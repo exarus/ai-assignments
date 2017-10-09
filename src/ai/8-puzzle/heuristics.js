@@ -7,7 +7,7 @@ import update from 'ramda/src/update'
 import zipWith from 'ramda/src/zipWith'
 import { defaultGrid, emptyCellIndices, emptyCellNeighbors, emptyCellValue } from '@/util/8-puzzle'
 
-export const goalState = { grid: defaultGrid }
+export const goalState = defaultGrid
 
 export const displacedCells = (grid) => {
   const displaced = zipWith(
@@ -50,10 +50,24 @@ export const neighborStates = (state) => {
   return emptyCellNeighbors(state).map(cell => withSwappedCells(state, cell, emptyCell))
 }
 
-export const toMove = (initState, destState) => {
+const toMove = (initState, destState) => {
   const to = emptyCellIndices(initState)
   const from = emptyCellNeighbors(initState).filter(
     ([x, y]) => destState[x][y] === emptyCellValue
   )[0]
   return { from, to }
 }
+
+export const toResult = ({ state, ancestors }) => (
+  [...ancestors, state]
+    .reduce(
+      ({ result, prevState }, curState) => {
+        if (prevState !== null) {
+          result.push(toMove(prevState, curState))
+        }
+        return { result, prevState: curState }
+      },
+      { result: [], prevState: null }
+    )
+    .result
+)

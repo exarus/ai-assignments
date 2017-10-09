@@ -1,51 +1,39 @@
-import pipe from 'ramda/src/pipe'
 import minBy from 'ramda/src/minBy'
-import { displacedCells, isSolved, possibleMoves, goalState } from '@/ai/8-puzzle/heuristics'
-import curry from 'ramda/src/curry'
+import { displacedCells, isSolved, neighborStates, goalState, toResult } from '@/ai/8-puzzle/heuristics'
 
-const estimatedCost = curry(
-  (costToState, costToEnd, goalState, initialState, state) => (
-    7 * Math.abs(costToState(state) - costToState(initialState)) +
-    (costToEnd(state) - costToEnd(goalState))
+const estimatedCostFactory = (costToState, costToEnd, goalNode, initNode) => {
+  const initStateCost = costToState(initNode)
+  const goalStateCost = costToEnd(goalNode)
+  return node => (
+    (costToState(node) - initStateCost) +
+    (costToEnd(node) - goalStateCost)
   )
-)
-
+}
 const costToState = node => node.ancestors.length
+const costToEnd = node => displacedCells(node.state)
 
-const costToEnd = node => displacedCells(node.grid)
-
-export default (initGrid) => {
-  const initState = {
-    grid: initGrid,
-    ancestors: []
-  }
-  const puzzleEstimatedCost = estimatedCost(costToState, costToEnd, goalState, initState)
+export default (initState) => {
+  const initNode = { state: initState, ancestors: [] }
+  const estimatedCost = estimatedCostFactory(costToState, costToEnd, { state: goalState }, initNode)
 
   const nodes = []
   let curNode = {
-    ...initState,
-    cost: puzzleEstimatedCost(initState)
+    ...initNode,
+    cost: estimatedCost(initNode)
   }
   while (true) {
     process.env.NODE_ENV !== 'production' && console.log({ depth: curNode.ancestors.length, cost: curNode.cost })
-    if (isSolved(curNode.grid)) {
-      return nodeToMoves(curNode)
+    if (isSolved(curNode.state)) {
+      return toResult(curNode)
     }
-    const children = possibleMoves(curNode.grid)
-    children.forEach((m) => {
-      m.ancestors = [...curNode.ancestors, curNode]
-      m.cost = puzzleEstimatedCost(m)
-    })
-    nodes.push(...children)
+    nodes.push(
+      ...neighborStates(curNode.state).map((state) => {
+        const ancestors = [...curNode.ancestors, curNode.state]
+        const cost = estimatedCost({ state, ancestors })
+        return { state, ancestors, cost }
+      })
+    )
     curNode = nodes.reduce(minBy(n => n.cost))
     nodes.splice(nodes.indexOf(curNode), 1)
   }
 }
-
-const nodeToMoves = pipe(
-  node => [...node.ancestors, node],
-  ancestors => ancestors.slice(1),
-  ancestors => ancestors.map(
-    ({ from, to }) => ({ from, to })
-  )
-)
