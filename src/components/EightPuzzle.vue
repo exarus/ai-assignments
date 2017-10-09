@@ -34,6 +34,7 @@ export default {
       grid = savedGrid !== null
         ? JSON.parse(savedGrid)
         : defaultGrid
+      this.$emit('update:initialGrid', grid)
     }
     return {
       grid,
