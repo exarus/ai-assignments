@@ -1,11 +1,11 @@
 <template lang="pug">
 .root
   .game
-    eight-puzzle(:initial-grid.sync='grid')
+    EightPuzzle(:initial-grid.sync='grid')
     .control
-      el-button(v-if='gameInProgress', @click='startNewGame' type='warning' size='large') Restart
-      el-button(v-else @click='startNewGame' type='primary' size='large') Start Game
-  el-dialog(
+      ElButton(v-if='gameInProgress', @click='startNewGame' type='warning' size='large') Restart
+      ElButton(v-else @click='startNewGame' type='primary' size='large') Start Game
+  ElDialog(
     title='You won!',
     :width='dialogWidth()'
     center
@@ -13,8 +13,8 @@
   )
     .restart-question Do you want to start a new game?
     span(slot='footer')
-      el-button(@click='finishGame') Cancel
-      el-button(type='primary', @click='startNewGame') Confirm
+      ElButton(@click='finishGame') Cancel
+      ElButton(type='primary', @click='startNewGame') Confirm
 </template>
 
 <script>

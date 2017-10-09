@@ -1,10 +1,10 @@
 <template lang="pug">
 .root
   .solver
-    eight-puzzle(:initial-grid.sync='grid')
+    EightPuzzle(:initial-grid.sync='grid')
     .control
-      el-button(@click='shuffle' type='primary' size='large') Shuffle
-      el-button(@click='findSolution' type='success' size='large' ) Find solution
+      ElButton(@click='shuffle' type='primary' size='large') Shuffle
+      ElButton(@click='findSolution' type='success' size='large' ) Find solution
 </template>
 
 <script>
