@@ -20,16 +20,6 @@ export const displacedCells = (grid) => {
 
 export const isSolved = grid => equals(grid, defaultGrid)
 
-export const possibleMoves = (grid) => {
-  const emptyCell = emptyCellIndices(grid)
-  const neighbors = emptyCellNeighbors(grid)
-  return neighbors.map(movableCell => ({
-    from: movableCell,
-    to: emptyCell,
-    grid: withSwappedCells(grid, movableCell, emptyCell)
-  }))
-}
-
 const withSwappedCells = (grid, [x1, y1], [x2, y2]) => {
   const applySwap = (x1 === x2)
     ? adjust(
@@ -45,3 +35,15 @@ const withSwappedCells = (grid, [x1, y1], [x2, y2]) => {
     )
   return applySwap(grid)
 }
+
+export const possibleMoves = (grid) => {
+  const emptyCell = emptyCellIndices(grid)
+  const neighbors = emptyCellNeighbors(grid)
+  return neighbors.map(movableCell => ({
+    from: movableCell,
+    to: emptyCell,
+    grid: withSwappedCells(grid, movableCell, emptyCell)
+  }))
+}
+
+export { emptyCellNeighbors as neighborStates }
