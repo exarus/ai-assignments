@@ -1,7 +1,14 @@
-import append from 'ramda/src/append'
 import pipe from 'ramda/src/pipe'
 import minBy from 'ramda/src/minBy'
-import { displacedCells, isSolved, defaultGrid, possibleMoves, estimatedCost } from '@/ai/8-puzzle/heuristics'
+import { displacedCells, isSolved, possibleMoves, goalState } from '@/ai/8-puzzle/heuristics'
+import curry from 'ramda/src/curry'
+
+const estimatedCost = curry(
+  (costToState, costToEnd, goalState, initialState, state) => (
+    7 * Math.abs(costToState(state) - costToState(initialState)) +
+    (costToEnd(state) - costToEnd(goalState))
+  )
+)
 
 const costToState = node => node.ancestors.length
 
@@ -12,7 +19,6 @@ export default (initGrid) => {
     grid: initGrid,
     ancestors: []
   }
-  const goalState = { grid: defaultGrid }
   const puzzleEstimatedCost = estimatedCost(costToState, costToEnd, goalState, initState)
 
   const nodes = []
@@ -27,7 +33,7 @@ export default (initGrid) => {
     }
     const children = possibleMoves(curNode.grid)
     children.forEach((m) => {
-      m.ancestors = append(curNode, curNode.ancestors)
+      m.ancestors = [...curNode.ancestors, curNode]
       m.cost = puzzleEstimatedCost(m)
     })
     nodes.push(...children)
@@ -37,7 +43,7 @@ export default (initGrid) => {
 }
 
 const nodeToMoves = pipe(
-  node => append(node, node.ancestors),
+  node => [...node.ancestors, node],
   ancestors => ancestors.slice(1),
   ancestors => ancestors.map(
     ({ from, to }) => ({ from, to })

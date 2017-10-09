@@ -5,8 +5,9 @@ import flatten from 'ramda/src/flatten'
 import sum from 'ramda/src/sum'
 import update from 'ramda/src/update'
 import zipWith from 'ramda/src/zipWith'
-import { emptyCellIndices, defaultGrid } from '@/util/8-puzzle'
-import curry from 'ramda/src/curry'
+import { defaultGrid, emptyCellIndices, emptyCellNeighbors } from '@/util/8-puzzle'
+
+export const goalState = { grid: defaultGrid }
 
 export const displacedCells = (grid) => {
   const displaced = zipWith(
@@ -18,26 +19,6 @@ export const displacedCells = (grid) => {
 }
 
 export const isSolved = grid => equals(grid, defaultGrid)
-
-export const emptyCellNeighbors = (grid) => {
-  const emptyCell = emptyCellIndices(grid)
-  const [x, y] = emptyCell
-  const maxIndex = grid.length - 1
-  const neighbors = []
-  if (x !== 0) {
-    neighbors.push([x - 1, y])
-  }
-  if (x !== maxIndex) {
-    neighbors.push([x + 1, y])
-  }
-  if (y !== 0) {
-    neighbors.push([x, y - 1])
-  }
-  if (y !== maxIndex) {
-    neighbors.push([x, y + 1])
-  }
-  return neighbors
-}
 
 export const possibleMoves = (grid) => {
   const emptyCell = emptyCellIndices(grid)
@@ -64,12 +45,3 @@ const withSwappedCells = (grid, [x1, y1], [x2, y2]) => {
     )
   return applySwap(grid)
 }
-
-export const estimatedCost = curry(
-  (costToState, costToEnd, goalState, initialState, state) => (
-    7 * Math.abs(costToState(state) - costToState(initialState)) +
-    (costToEnd(state) - costToEnd(goalState))
-  )
-)
-
-export { defaultGrid } from '@/util/8-puzzle'

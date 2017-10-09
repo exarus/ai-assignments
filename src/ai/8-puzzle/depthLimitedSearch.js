@@ -1,4 +1,3 @@
-import append from 'ramda/src/append'
 import minBy from 'ramda/src/minBy'
 import { isSolved, possibleMoves } from '@/ai/8-puzzle/heuristics'
 
@@ -13,7 +12,9 @@ const depthLimitedSearch = (grid, test, depthLimit = 1, stack = []) => {
     return { cutOff: true }
   } else {
     const searchResults = possibleMoves(grid)
-      .map(move => depthLimitedSearch(move.grid, test, depthLimit, append(move, stack)))
+      .map(
+        move => depthLimitedSearch(move.grid, test, depthLimit, [...stack, move])
+      )
     if (searchResults.length === 0) {
       return { failure: true }
     }
