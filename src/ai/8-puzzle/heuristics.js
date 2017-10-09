@@ -5,7 +5,7 @@ import flatten from 'ramda/src/flatten'
 import sum from 'ramda/src/sum'
 import update from 'ramda/src/update'
 import zipWith from 'ramda/src/zipWith'
-import { defaultGrid, emptyCellIndices, emptyCellNeighbors } from '@/util/8-puzzle'
+import { defaultGrid, emptyCellIndices, emptyCellNeighbors, emptyCellValue } from '@/util/8-puzzle'
 
 export const goalState = { grid: defaultGrid }
 
@@ -38,12 +38,22 @@ const withSwappedCells = (grid, [x1, y1], [x2, y2]) => {
 
 export const possibleMoves = (grid) => {
   const emptyCell = emptyCellIndices(grid)
-  const neighbors = emptyCellNeighbors(grid)
-  return neighbors.map(movableCell => ({
+  return emptyCellNeighbors(grid).map(movableCell => ({
     from: movableCell,
     to: emptyCell,
     grid: withSwappedCells(grid, movableCell, emptyCell)
   }))
 }
 
-export { emptyCellNeighbors as neighborStates }
+export const neighborStates = (state) => {
+  const emptyCell = emptyCellIndices(state)
+  return emptyCellNeighbors(state).map(cell => withSwappedCells(state, cell, emptyCell))
+}
+
+export const toMove = (initState, destState) => {
+  const to = emptyCellIndices(initState)
+  const from = emptyCellNeighbors(initState).filter(
+    ([x, y]) => destState[x][y] === emptyCellValue
+  )[0]
+  return { from, to }
+}
