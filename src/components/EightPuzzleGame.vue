@@ -1,10 +1,7 @@
 <template lang="pug">
 .root
   .game
-    eight-puzzle(
-      :initial-grid='grid',
-      @ordered='winNotification'
-    )
+    eight-puzzle(:initial-grid.sync='grid')
     .control
       el-button(v-if='gameInProgress', @click='startNewGame' type='warning' size='large') Restart
       el-button(v-else @click='startNewGame' type='primary' size='large') Start Game
@@ -21,8 +18,9 @@
 </template>
 
 <script>
+import equals from 'ramda/src/equals'
 import EightPuzzle from '@/components/EightPuzzle'
-import { shuffledGrid } from '@/util/8-puzzle'
+import { defaultGrid, shuffledGrid } from '@/util/8-puzzle'
 
 const gameInProgressStorageKey = 'gameInProgress'
 
@@ -38,6 +36,12 @@ export default {
     }
   },
   watch: {
+    grid (newGrid) {
+      if (this.gameInProgress && equals(newGrid, defaultGrid)) {
+        this.winNotificationVisible = true
+        this.gameInProgress = false
+      }
+    },
     gameInProgress (gameInProgress) {
       localStorage.setItem(gameInProgressStorageKey, JSON.stringify(gameInProgress))
     }
@@ -47,12 +51,6 @@ export default {
       this.winNotificationVisible = false
       this.gameInProgress = true
       this.grid = shuffledGrid(200)
-    },
-    winNotification () {
-      if (this.gameInProgress) {
-        this.winNotificationVisible = true
-        this.gameInProgress = false
-      }
     },
     finishGame () {
       this.winNotificationVisible = false

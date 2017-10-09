@@ -1,10 +1,10 @@
 <template lang="pug">
 .root
   .solver
-    eight-puzzle(:initial-grid='grid')
+    eight-puzzle(:initial-grid.sync='grid')
     .control
-      el-button(@click.prevent='shuffle' type='primary' size='large') Shuffle
-      el-button(@click.prevent='findSolution' type='success' size='large' ) Find solution
+      el-button(@click='shuffle' type='primary' size='large') Shuffle
+      el-button(@click='findSolution' type='success' size='large' ) Find solution
 </template>
 
 <script>
@@ -22,7 +22,7 @@ export default {
   },
   methods: {
     shuffle () {
-      this.grid = shuffledGrid(33)
+      this.grid = shuffledGrid(8)
     },
     findSolution () {
       const solution = findSolution(this.grid)

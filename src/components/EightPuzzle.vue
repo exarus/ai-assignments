@@ -13,11 +13,10 @@
     ) {{cell !== emptyCell ? cell : ''}}
 </template>
 
-<!--suppress JSPotentiallyInvalidTargetOfIndexedPropertyAccess, JSUnresolvedVariable -->
 <script>
-import clone from 'ramda/src/clone'
 import equals from 'ramda/src/equals'
-import { defaultGrid, emptyCellValue, emptyCellIndices, cellIndices, manhattanDistance, swapCells } from '@/util/8-puzzle'
+import clone from 'ramda/src/clone'
+import { defaultGrid, emptyCellValue, emptyCellIndices, cellIndices, manhattanDistance } from '@/util/8-puzzle'
 
 const gridStorageKey = 'grid'
 
@@ -51,12 +50,12 @@ export default {
   },
   watch: {
     initialGrid (newGrid) {
-      this.grid = clone(newGrid)
+      if (!equals(newGrid, this.grid)) {
+        this.grid = clone(newGrid)
+      }
     },
     grid (newGrid) {
-      if (equals(newGrid, defaultGrid)) {
-        this.$emit('ordered')
-      }
+      this.$emit('update:initialGrid', newGrid)
       localStorage.setItem(gridStorageKey, JSON.stringify(newGrid))
     }
   },
@@ -79,9 +78,10 @@ export default {
     cellIndices (cell) {
       return cellIndices(this.grid, cell)
     },
-    swapCells (c1, c2) {
-      swapCells(this.grid, c1, c2)
-      this.grid.splice(this.grid.length) // triggers rerender
+    swapCells ([x1, y1], [x2, y2]) {
+      const tmp = this.grid[x1][y1]
+      this.$set(this.grid[x1], y1, this.grid[x2][y2])
+      this.$set(this.grid[x2], y2, tmp)
     }
   }
 }
