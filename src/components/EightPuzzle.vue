@@ -36,13 +36,11 @@ export default {
         : defaultGrid
       this.$emit('update:initialGrid', grid)
     }
+    this.emptyCell = emptyCellValue
     return {
       grid,
       draggedCell: 0
     }
-  },
-  created () {
-    this.emptyCell = emptyCellValue
   },
   computed: {
     emptyCellIndices () {
