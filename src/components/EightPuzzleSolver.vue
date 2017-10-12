@@ -13,9 +13,9 @@
           ElSelect.algorithms(v-model='algorithm')
             ElOption(
               v-for='item of algorithmOptions',
-              :key='item.value',
+              :key='item.key',
               :label='item.label',
-              :value='item.value'
+              :value='item.key'
             )
 </template>
 
@@ -26,28 +26,51 @@ import depthLimitedSearch from '@/ai/8-puzzle/depthLimitedSearch'
 import aStarSearch from '@/ai/8-puzzle/aStarSearch'
 import hillClimbingSearch from '@/ai/8-puzzle/hillClimbingSearch'
 
+// Map preserves iteration order
+const algorithmOptions = new Map([
+  ['A*', {
+    label: 'A* search',
+    method: aStarSearch
+  }],
+  ['DLS', {
+    label: 'Depth Limited Search',
+    method: depthLimitedSearch,
+    maxShuffle: 11
+  }],
+  ['Hill', {
+    label: 'Hill climbing with side moves and random relaunch',
+    method: hillClimbingSearch
+  }]
+])
+
 export default {
   name: 'EightPuzzleSolver',
   components: { EightPuzzle },
   data () {
-    this.algorithmOptions = [
-      { label: 'Depth Limited Search', value: 'dls', method: depthLimitedSearch },
-      { label: 'A* search', value: 'a*', method: aStarSearch },
-      { label: 'Hill climbing with side moves and random relaunch', value: 'hill', method: hillClimbingSearch }
-    ]
+    // Vue templates doesn't support ES6 Map
+    this.algorithmOptions = Array.from(algorithmOptions,
+      ([key, object]) => ({key, ...object})
+    )
     return {
       grid: null,
-      algorithm: this.algorithmOptions[0].value
+      algorithm: algorithmOptions.keys().next().value
+    }
+  },
+  computed: {
+    chosenMethod () {
+      return algorithmOptions.get(this.algorithm).method
+    },
+    maxShuffle () {
+      const specifiedValue = algorithmOptions.get(this.algorithm).maxShuffle
+      return specifiedValue !== undefined ? specifiedValue : 250
     }
   },
   methods: {
     shuffle () {
-      this.grid = shuffledGrid(8)
+      this.grid = shuffledGrid(this.maxShuffle)
     },
     findSolution () {
-      const findSolution = this.algorithmOptions.filter(
-        ({ value }) => value === this.algorithm
-      )[0].method
+      const findSolution = this.chosenMethod
       const solution = findSolution(this.grid)
       console.log(solution)
     }
