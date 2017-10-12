@@ -14,6 +14,7 @@
     "precommit": "lint-staged"
   },
   "dependencies": {
+    "bintrees": "^1.0.2",
     "element-ui": "^2.0.0-alpha.2",
     "mobile-drag-drop": "^2.2.0",
     "ramda": "^0.24.1",

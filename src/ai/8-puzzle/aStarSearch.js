@@ -1,4 +1,4 @@
-import minBy from 'ramda/src/minBy'
+import SortedSet from 'bintrees/lib/rbtree'
 import { displacedCells, isSolved, neighborStates, goalState, toResult } from '@/ai/8-puzzle/heuristics'
 
 const estimatedCostFactory = (costToState, costToEnd, goalNode, initNode) => {
@@ -12,28 +12,57 @@ const estimatedCostFactory = (costToState, costToEnd, goalNode, initNode) => {
 const costToState = node => node.ancestors.length
 const costToEnd = node => displacedCells(node.state)
 
+/**
+ * Compares 2 nodes. Is needed to create a sorted tree set.
+ * @returns {number}
+ */
+const nodeComparator = ({ cost: cost1, state: state1 }, { cost: cost2, state: state2 }) => {
+  const costDiff = cost1 - cost2
+  if (costDiff === 0) {
+    for (let i = 0; i < state1.length; i++) {
+      for (let j = 0; j < state1.length; j++) {
+        let stateDiff = state1[i][j] - state2[i][j]
+        if (stateDiff !== 0) {
+          return stateDiff
+        }
+      }
+    }
+    return 0
+  }
+  return costDiff
+}
+
 export default (initState) => {
   const initNode = { state: initState, ancestors: [] }
   const estimatedCost = estimatedCostFactory(costToState, costToEnd, { state: goalState }, initNode)
 
-  const nodes = []
-  let curNode = {
+  const openNodes = new SortedSet(nodeComparator)
+  const closedNodes = new SortedSet(nodeComparator)
+  let bestNode = {
     ...initNode,
     cost: estimatedCost(initNode)
   }
+  // TODO rewrite loop as tail-recursive when browsers will optimize tail call
   while (true) {
-    process.env.NODE_ENV !== 'production' && console.log({ depth: curNode.ancestors.length, cost: curNode.cost })
-    if (isSolved(curNode.state)) {
-      return toResult(curNode)
+    if (process.env.NODE_ENV !== 'production') {
+      console.log({ depth: bestNode.ancestors.length, cost: bestNode.cost })
     }
-    nodes.push(
-      ...neighborStates(curNode.state).map((state) => {
-        const ancestors = [...curNode.ancestors, curNode.state]
+    if (isSolved(bestNode.state)) {
+      return toResult(bestNode)
+    }
+    neighborStates(bestNode.state)
+      .map((state) => {
+        const ancestors = [...bestNode.ancestors, bestNode.state]
         const cost = estimatedCost({ state, ancestors })
         return { state, ancestors, cost }
       })
-    )
-    curNode = nodes.reduce(minBy(n => n.cost))
-    nodes.splice(nodes.indexOf(curNode), 1)
+      .forEach((neighbor) => {
+        if (openNodes.find(neighbor) === null && openNodes.find(neighbor) === null) {
+          openNodes.insert(neighbor)
+        }
+      })
+    closedNodes.insert(bestNode)
+    bestNode = openNodes.min()
+    openNodes.remove(bestNode)
   }
 }
