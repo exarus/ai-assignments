@@ -1,16 +1,18 @@
 import SortedSet from 'bintrees/lib/rbtree'
-import { displacedCells, isSolved, neighborStates, goalState, toResult } from '@/ai/8-puzzle/heuristics'
+import { totalManhattanDistance, linearConflict, neighborStates, toResult } from '@/ai/8-puzzle/heuristics'
 
-const estimatedCostFactory = (costToState, costToEnd, goalNode, initNode) => {
-  const initStateCost = costToState(initNode)
-  const goalStateCost = costToEnd(goalNode)
-  return node => (
-    (costToState(node) - initStateCost) +
-    (costToEnd(node) - goalStateCost)
-  )
-}
-const costToState = node => node.ancestors.length
-const costToEnd = node => displacedCells(node.state)
+// const estimatedCostFactory = (costToState, costToEnd, goalNode, initNode) => {
+//   const initStateCost = costToState(initNode)
+//   const goalStateCost = costToEnd(goalNode)
+//   return node => (
+//     Math.abs(costToState(node) - initStateCost) +
+//     (costToEnd(node) - goalStateCost)
+//   )
+// }
+// const costToState = node => totalManhattanDistance(node.state) + linearConflict(node.state)
+// const costToEnd = node => totalManhattanDistance(node.state) + linearConflict(node.state)
+const isSolved = node => node.cost === 0
+const estimatedCost = node => totalManhattanDistance(node.state) + linearConflict(node.state)
 
 /**
  * Compares 2 nodes. Is needed to create a sorted tree set.
@@ -20,7 +22,7 @@ const nodeComparator = ({ cost: cost1, state: state1 }, { cost: cost2, state: st
   const costDiff = cost1 - cost2
   if (costDiff === 0) {
     for (let i = 0; i < state1.length; i++) {
-      for (let j = 0; j < state1.length; j++) {
+      for (let j = 0; j < state1[i].length; j++) {
         let stateDiff = state1[i][j] - state2[i][j]
         if (stateDiff !== 0) {
           return stateDiff
@@ -33,21 +35,19 @@ const nodeComparator = ({ cost: cost1, state: state1 }, { cost: cost2, state: st
 }
 
 export default (initState) => {
-  const initNode = { state: initState, ancestors: [] }
-  const estimatedCost = estimatedCostFactory(costToState, costToEnd, { state: goalState }, initNode)
-
   const openNodes = new SortedSet(nodeComparator)
   const closedNodes = new SortedSet(nodeComparator)
   let bestNode = {
-    ...initNode,
-    cost: estimatedCost(initNode)
+    state: initState,
+    ancestors: [],
+    cost: estimatedCost({ state: initState })
   }
   // TODO rewrite loop as tail-recursive when browsers will optimize tail call
   while (true) {
     if (process.env.NODE_ENV !== 'production') {
       console.log({ depth: bestNode.ancestors.length, cost: bestNode.cost })
     }
-    if (isSolved(bestNode.state)) {
+    if (isSolved(bestNode)) {
       return toResult(bestNode)
     }
     neighborStates(bestNode.state)
@@ -57,7 +57,7 @@ export default (initState) => {
         return { state, ancestors, cost }
       })
       .forEach((neighbor) => {
-        if (openNodes.find(neighbor) === null && openNodes.find(neighbor) === null) {
+        if (openNodes.find(neighbor) === null && closedNodes.find(neighbor) === null) {
           openNodes.insert(neighbor)
         }
       })

@@ -1,7 +1,7 @@
 import maxBy from 'ramda/src/maxBy'
-import { displacedCells, neighborStates, toResult } from '@/ai/8-puzzle/heuristics'
+import { displacedTiles, neighborStates, toResult } from '@/ai/8-puzzle/heuristics'
 
-const heuristics = state => -displacedCells(state)
+const heuristics = state => -displacedTiles(state)
 
 const hillClimbingSearch = ({ state, ancestors = [] }) => {
   const bestNeighborState = neighborStates(state).reduce(maxBy(heuristics))
