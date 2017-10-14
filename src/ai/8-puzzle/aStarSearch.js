@@ -1,5 +1,6 @@
 import SortedSet from 'bintrees/lib/rbtree'
-import { totalManhattanDistance, linearConflict, neighborStates, toResult } from '@/ai/8-puzzle/heuristics'
+import { totalManhattanDistance, linearConflict, toResult } from '@/ai/8-puzzle/heuristics'
+import { neighborStates, stateComparator } from '@/ai/8-puzzle/util'
 
 // const estimatedCostFactory = (costToState, costToEnd, goalNode, initNode) => {
 //   const initStateCost = costToState(initNode)
@@ -15,23 +16,12 @@ const isSolved = node => node.cost === 0
 const estimatedCost = node => totalManhattanDistance(node.state) + linearConflict(node.state)
 
 /**
- * Compares 2 nodes. Is needed to create a sorted tree set.
+ * Is needed to create a sorted tree set. Returns one of [-1, 0, 1]
  * @returns {number}
  */
 const nodeComparator = ({ cost: cost1, state: state1 }, { cost: cost2, state: state2 }) => {
   const costDiff = cost1 - cost2
-  if (costDiff === 0) {
-    for (let i = 0; i < state1.length; i++) {
-      for (let j = 0; j < state1[i].length; j++) {
-        let stateDiff = state1[i][j] - state2[i][j]
-        if (stateDiff !== 0) {
-          return stateDiff
-        }
-      }
-    }
-    return 0
-  }
-  return costDiff
+  return costDiff !== 0 ? costDiff : stateComparator(state1, state2)
 }
 
 export default (initState) => {
@@ -57,7 +47,7 @@ export default (initState) => {
         return { state, ancestors, cost }
       })
       .forEach((neighbor) => {
-        if (openNodes.find(neighbor) === null && closedNodes.find(neighbor) === null) {
+        if (!(openNodes.find(neighbor) || closedNodes.find(neighbor))) {
           openNodes.insert(neighbor)
         }
       })
