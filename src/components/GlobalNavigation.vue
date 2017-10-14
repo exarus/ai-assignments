@@ -2,7 +2,7 @@
 .navigation
   img(src="~@/assets/ai.svg")
   h1 Welcome to the world of artificial intelligence
-  h2 Works
+  h2 Artificial Intelligence
   ul
     li
       router-link(to='/ai/8-puzzle') 8-Puzzle Problem

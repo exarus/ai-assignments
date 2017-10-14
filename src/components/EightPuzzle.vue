@@ -31,9 +31,7 @@ export default {
       grid = clone(this.initialGrid)
     } else {
       const savedGrid = localStorage.getItem(gridStorageKey)
-      grid = savedGrid !== null
-        ? JSON.parse(savedGrid)
-        : defaultGrid
+      grid = savedGrid !== null ? JSON.parse(savedGrid) : defaultGrid
       this.$emit('update:initialGrid', grid)
     }
     this.emptyCell = emptyCellValue
@@ -85,6 +83,7 @@ export default {
   }
 }
 </script>
+
 <style scoped>
 .grid {
   background: #e6eefb;
