@@ -5,9 +5,9 @@
     .control
       ElRow(type='flex')
         ElCol(:span='12')
-          ElButton(@click='shuffle' type='primary' size='large') Shuffle
+          ElButton(@click='shuffle' type='primary' size='large' round) Shuffle
         ElCol(:span='12')
-          ElButton(@click='findSolution' type='success' size='large' ) Find solution
+          ElButton(@click='findSolution' type='success' size='large' round) Find solution
       ElRow(type='flex')
         ElCol(:span='12', :offset='12')
           ElSelect.algorithms(v-model='algorithm')
@@ -17,6 +17,9 @@
               :label='item.label',
               :value='item.key'
             )
+  ElTable.solution(v-loading='searchInProgress', element-loading-text='Searching...', :data='solution')
+    ElTableColumn(prop='from' label='From')
+    ElTableColumn(prop='to' label='To')
 </template>
 
 <script>
@@ -34,8 +37,7 @@ const algorithmOptions = new Map([
   }],
   ['DLS', {
     label: 'Depth Limited Search',
-    method: depthLimitedSearch,
-    maxShuffle: 11
+    method: depthLimitedSearch
   }],
   ['Hill', {
     label: 'Hill climbing with side moves and random relaunch',
@@ -46,33 +48,41 @@ const algorithmOptions = new Map([
 export default {
   name: 'EightPuzzleSolver',
   components: { EightPuzzle },
-  data () {
-    // Vue templates doesn't support ES6 Map
+  data: () => ({
+    grid: null,
+    algorithm: algorithmOptions.keys().next().value,
+    solution: null,
+    searchInProgress: false
+  }),
+  computed: {
+    chosenMethod: ({ algorithm }) => algorithmOptions.get(algorithm).method,
+    maxShuffle: ({ algorithm }) => {
+      const specifiedValue = algorithmOptions.get(algorithm).maxShuffle
+      return specifiedValue !== undefined ? specifiedValue : 250
+    }
+  },
+  created () {
     this.algorithmOptions = Array.from(algorithmOptions,
       ([key, object]) => ({key, ...object})
     )
-    return {
-      grid: null,
-      algorithm: algorithmOptions.keys().next().value
-    }
-  },
-  computed: {
-    chosenMethod () {
-      return algorithmOptions.get(this.algorithm).method
-    },
-    maxShuffle () {
-      const specifiedValue = algorithmOptions.get(this.algorithm).maxShuffle
-      return specifiedValue !== undefined ? specifiedValue : 250
-    }
   },
   methods: {
     shuffle () {
       this.grid = shuffledGrid(this.maxShuffle)
     },
     findSolution () {
-      const findSolution = this.chosenMethod
-      const solution = findSolution(this.grid)
-      console.log(solution)
+      this.searchInProgress = true
+      try {
+        const solution = this.chosenMethod(this.grid)
+          .map(({ from, to }) => ({
+            from: JSON.stringify(from.map(i => i + 1)),
+            to: JSON.stringify(to.map(i => i + 1))
+          }))
+        console.log(solution)
+        this.solution = solution
+      } finally {
+        this.searchInProgress = false
+      }
     }
   }
 }
@@ -84,7 +94,7 @@ export default {
   font-size: 3.6vmin;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
 
   & > .solver {
     display: flex;
@@ -108,6 +118,11 @@ export default {
         width: calc(100% - 1vmin);
       }
     }
+  }
+
+  & > .solution {
+    width: 25%;
+    margin: 10px;
   }
 }
 </style>

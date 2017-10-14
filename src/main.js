@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { Button, Dialog, Select, Option, Row, Col } from 'element-ui'
+import { Button, Dialog, Select, Option, Row, Col, Table, TableColumn, Loading } from 'element-ui'
 import App from './App'
 import router from './router'
 
@@ -11,6 +11,9 @@ Vue.use(Select)
 Vue.use(Option)
 Vue.use(Col)
 Vue.use(Row)
+Vue.use(Table)
+Vue.use(TableColumn)
+Vue.use(Loading)
 
 // eslint-disable-next-line no-new
 new Vue({
