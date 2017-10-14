@@ -74,12 +74,11 @@ export default {
       this.searchInProgress = true
       try {
         const solution = this.chosenMethod(this.grid)
-          .map(({ from, to }) => ({
-            from: JSON.stringify(from.map(i => i + 1)),
-            to: JSON.stringify(to.map(i => i + 1))
-          }))
         console.log(solution)
-        this.solution = solution
+        this.solution = solution.map(({ from, to }) => ({
+          from: JSON.stringify(from.map(i => i + 1)),
+          to: JSON.stringify(to.map(i => i + 1))
+        }))
       } finally {
         this.searchInProgress = false
       }
