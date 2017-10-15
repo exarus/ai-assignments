@@ -73,8 +73,14 @@ export default {
     findSolution () {
       this.searchInProgress = true
       try {
+        if (process.env.NODE_ENV !== 'production') {
+          console.time('solutionTimeTaken')
+        }
         const solution = this.chosenMethod(this.grid)
-        console.log(solution)
+        if (process.env.NODE_ENV !== 'production') {
+          console.timeEnd('solutionTimeTaken')
+          console.log(solution)
+        }
         this.solution = solution.map(({ from, to }) => ({
           from: JSON.stringify(from.map(i => i + 1)),
           to: JSON.stringify(to.map(i => i + 1))
