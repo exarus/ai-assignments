@@ -1,19 +1,8 @@
 import SortedSet from 'bintrees/lib/rbtree'
-import { totalManhattanDistance, linearConflict, toResult } from '@/ai/8-puzzle/heuristics'
-import { neighborStates, stateComparator } from '@/ai/8-puzzle/util'
+import estimatedCost from '@/ai/8-puzzle/heuristics'
+import { neighborStates, stateComparator, toResult } from '@/ai/8-puzzle/util'
 
-// const estimatedCostFactory = (costToState, costToEnd, goalNode, initNode) => {
-//   const initStateCost = costToState(initNode)
-//   const goalStateCost = costToEnd(goalNode)
-//   return node => (
-//     Math.abs(costToState(node) - initStateCost) +
-//     (costToEnd(node) - goalStateCost)
-//   )
-// }
-// const costToState = node => totalManhattanDistance(node.state) + linearConflict(node.state)
-// const costToEnd = node => totalManhattanDistance(node.state) + linearConflict(node.state)
 const isSolved = node => node.cost === 0
-const estimatedCost = node => totalManhattanDistance(node.state) + linearConflict(node.state)
 
 /**
  * Is needed to create a sorted tree set. Returns one of [-1, 0, 1]
@@ -30,7 +19,7 @@ export default (initState) => {
   let bestNode = {
     state: initState,
     ancestors: [],
-    cost: estimatedCost({ state: initState })
+    cost: estimatedCost(initState)
   }
   // TODO rewrite loop as tail-recursive when browsers will optimize tail call
   while (true) {
@@ -40,10 +29,11 @@ export default (initState) => {
     if (isSolved(bestNode)) {
       return toResult(bestNode)
     }
+    closedNodes.insert(bestNode)
     neighborStates(bestNode.state)
       .map((state) => {
         const ancestors = [...bestNode.ancestors, bestNode.state]
-        const cost = estimatedCost({ state, ancestors })
+        const cost = estimatedCost(state)
         return { state, ancestors, cost }
       })
       .forEach((neighbor) => {
@@ -51,7 +41,6 @@ export default (initState) => {
           openNodes.insert(neighbor)
         }
       })
-    closedNodes.insert(bestNode)
     bestNode = openNodes.min()
     openNodes.remove(bestNode)
   }

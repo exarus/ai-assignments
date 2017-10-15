@@ -1,7 +1,7 @@
 import adjust from 'ramda/src/adjust'
 import compose from 'ramda/src/compose'
 import update from 'ramda/src/update'
-import { emptyCellIndices, emptyCellNeighbors } from '@/util/8-puzzle'
+import { emptyCellIndices, emptyCellNeighbors, emptyCellValue } from '@/util/8-puzzle'
 
 export const stateComparator = (state1, state2) => {
   for (let i = 0; i < state1.length; i++) {
@@ -35,3 +35,25 @@ export const neighborStates = (state) => {
   const emptyCell = emptyCellIndices(state)
   return emptyCellNeighbors(state).map(cell => withSwappedCells(state, cell, emptyCell))
 }
+
+const toMove = (initState, destState) => {
+  const to = emptyCellIndices(initState)
+  const from = emptyCellNeighbors(initState).filter(
+    ([x, y]) => destState[x][y] === emptyCellValue
+  )[0]
+  return { from, to }
+}
+
+export const toResult = ({ state, ancestors }) => (
+  [...ancestors, state]
+    .reduce(
+      ({ result, prevState }, curState) => {
+        if (prevState !== null) {
+          result.push(toMove(prevState, curState))
+        }
+        return { result, prevState: curState }
+      },
+      { result: [], prevState: null }
+    )
+    .result
+)

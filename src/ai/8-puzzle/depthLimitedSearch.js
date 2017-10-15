@@ -13,34 +13,35 @@ const possibleMoves = (grid) => {
   }))
 }
 
-const depthLimitedSearch = (grid, test, depthLimit, stack, closedList) => {
+const depthLimitedSearch = (grid, test, depthLimit, stack, closedStates) => {
   if (test(grid)) {
     return {
       result: stack.map(({ from, to }) => ({ from, to }))
     }
+  } else if (stack.length === depthLimit) {
+    return { cutOff: true }
   } else {
-    closedList.insert(grid)
-    if (stack.length === depthLimit) {
-      return { cutOff: true }
-    } else {
-      const results = possibleMoves(grid)
-        .filter(({ grid }) => !closedList.find(grid))
-        .map(move => depthLimitedSearch(move.grid, test, depthLimit, [...stack, move], closedList))
-        .filter(({ cutOff }) => !cutOff)
-      return results.length
-        ? results.reduce(minBy(({ result }) => result.length))
-        : { cutOff: true }
-    }
+    const openMoves = possibleMoves(grid).filter(({ grid }) => !closedStates.find(grid))
+    closedStates.insert(grid)
+    const results = openMoves
+      .map(move => depthLimitedSearch(move.grid, test, depthLimit, [...stack, move], Object.assign({}, closedStates)))
+      .filter(({ cutOff }) => !cutOff)
+    return results.length
+      ? results.reduce(minBy(({ result }) => result.length))
+      : { cutOff: true }
   }
 }
 
-export default (grid) => {
-  for (let i = 24; i < 32; i++) {
-    const closedList = new SortedSet(stateComparator)
-    const result = depthLimitedSearch(grid, isSolved, i, [], closedList)
-    if (!result.cutOff) {
-      return result.result
-    }
+const iterativeDepthLimitedSearch = (grid, [limit, ...nextLimit] = [24, 28, 31]) => {
+  const closedStates = new SortedSet(stateComparator)
+  const result = depthLimitedSearch(grid, isSolved, limit, [], closedStates)
+  if (!result.cutOff) {
+    return result.result
+  } else if (nextLimit.length) {
+    return iterativeDepthLimitedSearch(grid, nextLimit)
+  } else {
+    throw new Error(`Computation exceeds depth limit of ${limit}`)
   }
-  return new Error('Computation will take too long')
 }
+
+export default iterativeDepthLimitedSearch

@@ -2,15 +2,13 @@ import equals from 'ramda/src/equals'
 import flatten from 'ramda/src/flatten'
 import sum from 'ramda/src/sum'
 import zipWith from 'ramda/src/zipWith'
-import { cellIndices, defaultGrid, emptyCellIndices, emptyCellNeighbors, emptyCellValue, manhattanDistance } from '@/util/8-puzzle'
-
-export const goalState = defaultGrid
+import { cellIndices, defaultGrid as goalState, emptyCellValue, manhattanDistance } from '@/util/8-puzzle'
 
 export const displacedTiles = (grid) => {
   const displaced = zipWith(
     (c1, c2) => c1 === c2 ? 0 : 1,
     flatten(grid),
-    flatten(defaultGrid)
+    flatten(goalState)
   )
   return sum(displaced)
 }
@@ -71,26 +69,6 @@ export const linearConflict = (state) => {
   return total
 }
 
-export const isSolved = grid => equals(grid, defaultGrid)
+export const isSolved = state => equals(state, goalState)
 
-const toMove = (initState, destState) => {
-  const to = emptyCellIndices(initState)
-  const from = emptyCellNeighbors(initState).filter(
-    ([x, y]) => destState[x][y] === emptyCellValue
-  )[0]
-  return { from, to }
-}
-
-export const toResult = ({ state, ancestors }) => (
-  [...ancestors, state]
-    .reduce(
-      ({ result, prevState }, curState) => {
-        if (prevState !== null) {
-          result.push(toMove(prevState, curState))
-        }
-        return { result, prevState: curState }
-      },
-      { result: [], prevState: null }
-    )
-    .result
-)
+export default node => totalManhattanDistance(node) + linearConflict(node)

@@ -1,6 +1,6 @@
 import minBy from 'ramda/src/minBy'
-import { displacedTiles as heuristics, toResult } from '@/ai/8-puzzle/heuristics'
-import { neighborStates } from '@/ai/8-puzzle/util'
+import heuristics from '@/ai/8-puzzle/heuristics'
+import { neighborStates, toResult } from '@/ai/8-puzzle/util'
 
 // TODO rewrite loop as tail-recursive when browsers will optimize tail call
 const hillClimbingSearch = ({ state, ancestors = [], sideMovesLimit = 100 }) => {
