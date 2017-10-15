@@ -16,6 +16,8 @@
   "dependencies": {
     "bintrees": "^1.0.2",
     "element-ui": "^2.0.0-alpha.2",
+    "functional-red-black-tree": "^1.0.1",
+    "mnemonist": "^0.15.0",
     "mobile-drag-drop": "^2.2.0",
     "ramda": "^0.25.0",
     "vue": "^2.5.2",
@@ -34,7 +36,7 @@
     "connect-history-api-fallback": "^1.4.0",
     "copy-webpack-plugin": "^4.1.1",
     "css-loader": "^0.28.0",
-    "eslint": "^4.7.2",
+    "eslint": "^4.9.0",
     "eslint-config-standard": "^10.2.1",
     "eslint-friendly-formatter": "^3.0.0",
     "eslint-loader": "^1.7.1",
