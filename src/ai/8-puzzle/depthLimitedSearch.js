@@ -28,7 +28,7 @@ const depthLimitedSearch = (node, test, depthLimit, closedNodes) => {
   }
 }
 
-const iterativeDepthLimitedSearch = (state, [depthLimit, ...nextLimits] = [14, 15]) => {
+const iterativeDepthLimitedSearch = (state, [depthLimit, ...nextLimits] = [16, 18]) => {
   const result = depthLimitedSearch(createNode({ state }), isSolved, depthLimit, new Set())
   if (!result.cutOff) {
     return toResult(result.result)

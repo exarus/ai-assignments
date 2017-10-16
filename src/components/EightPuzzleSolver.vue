@@ -37,7 +37,8 @@ const algorithmOptions = new Map([
   }],
   ['DLS', {
     label: 'Depth Limited Search',
-    method: depthLimitedSearch
+    method: depthLimitedSearch,
+    maxShuffle: 16
   }],
   ['Hill', {
     label: 'Hill climbing with side moves and random relaunch',
