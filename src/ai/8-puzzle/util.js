@@ -44,10 +44,8 @@ const toMove = (initState, destState) => {
   return { from, to }
 }
 
-export const toResult = ({state, parent}, nextMoves = []) => {
-  if (parent) {
-    return toResult(parent, [toMove(parent.state, state), ...nextMoves])
-  } else {
-    return nextMoves
-  }
+export const toResult = ({ state, parent }, nextMoves = []) => {
+  return parent
+    ? toResult(parent, [toMove(parent.state, state), ...nextMoves])
+    : nextMoves
 }

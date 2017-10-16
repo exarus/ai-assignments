@@ -14,13 +14,13 @@ const nodeComparator = ({ cost: cost1, state: state1 }, { cost: cost2, state: st
   return costDiff !== 0 ? costDiff : stateComparator(state1, state2)
 }
 
-export default (initState) => {
+export default (state) => {
   const openNodesHeap = new FibonacciHeap(nodeComparator)
   const openNodesMap = new Map()
   const closedNodesMap = new Map()
   let bestNode = {
-    ...createNode({ state: initState }),
-    cost: estimatedCost(initState)
+    ...createNode({ state }),
+    cost: estimatedCost(state)
   }
   // TODO rewrite loop as tail-recursive when browsers will optimize tail call
   while (true) {
