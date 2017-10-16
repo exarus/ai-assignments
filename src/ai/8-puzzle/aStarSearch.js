@@ -1,6 +1,7 @@
-import SortedSet from 'bintrees/lib/rbtree'
+import createNode from '@/ai/8-puzzle/createNode'
+import FibonacciHeap from 'mnemonist/fibonacci-heap'
 import estimatedCost from '@/ai/8-puzzle/heuristics'
-import { neighborStates, stateComparator, toResult } from '@/ai/8-puzzle/util'
+import { stateComparator, toResult } from '@/ai/8-puzzle/util'
 
 const isSolved = node => node.cost === 0
 
@@ -14,34 +15,35 @@ const nodeComparator = ({ cost: cost1, state: state1 }, { cost: cost2, state: st
 }
 
 export default (initState) => {
-  const openNodes = new SortedSet(nodeComparator)
-  const closedNodes = new SortedSet(nodeComparator)
+  const openNodesHeap = new FibonacciHeap(nodeComparator)
+  const openNodesMap = new Map()
+  const closedNodesMap = new Map()
   let bestNode = {
-    state: initState,
-    ancestors: [],
+    ...createNode({ state: initState }),
     cost: estimatedCost(initState)
   }
   // TODO rewrite loop as tail-recursive when browsers will optimize tail call
   while (true) {
     if (process.env.NODE_ENV !== 'production') {
-      console.log({ depth: bestNode.ancestors.length, cost: bestNode.cost })
+      console.log({ cost: bestNode.cost, depth: bestNode.depth })
     }
     if (isSolved(bestNode)) {
       return toResult(bestNode)
     }
-    closedNodes.insert(bestNode)
-    neighborStates(bestNode.state)
-      .map((state) => {
-        const ancestors = [...bestNode.ancestors, bestNode.state]
-        const cost = estimatedCost(state)
-        return { state, ancestors, cost }
+    closedNodesMap.set(bestNode.stateId(), bestNode)
+    bestNode.neighborNodes()
+      .map((neighbor) => {
+        const cost = estimatedCost(neighbor.state)
+        return { ...neighbor, cost }
       })
       .forEach((neighbor) => {
-        if (!(openNodes.find(neighbor) || closedNodes.find(neighbor))) {
-          openNodes.insert(neighbor)
+        const key = neighbor.stateId()
+        if (!openNodesMap.has(key) && !closedNodesMap.has(key)) {
+          openNodesHeap.push(neighbor)
+          openNodesMap.set(key, neighbor)
         }
       })
-    bestNode = openNodes.min()
-    openNodes.remove(bestNode)
+    bestNode = openNodesHeap.pop()
+    openNodesMap.delete(bestNode.stateId())
   }
 }

@@ -1,46 +1,41 @@
-import SortedSet from 'bintrees/lib/rbtree'
+import createNode from '@/ai/8-puzzle/createNode'
 import minBy from 'ramda/src/minBy'
 import { isSolved } from '@/ai/8-puzzle/heuristics'
-import { stateComparator, withSwappedCells } from '@/ai/8-puzzle/util'
-import { emptyCellIndices, emptyCellNeighbors } from '@/util/8-puzzle'
+import { toResult } from '@/ai/8-puzzle/util'
 
-const possibleMoves = (grid) => {
-  const emptyCell = emptyCellIndices(grid)
-  return emptyCellNeighbors(grid).map(movableCell => ({
-    from: movableCell,
-    to: emptyCell,
-    grid: withSwappedCells(grid, movableCell, emptyCell)
-  }))
-}
-
-const depthLimitedSearch = (grid, test, depthLimit, stack, closedStates) => {
-  if (test(grid)) {
-    return {
-      result: stack.map(({ from, to }) => ({ from, to }))
-    }
-  } else if (stack.length === depthLimit) {
-    return { cutOff: true }
-  } else {
-    const openMoves = possibleMoves(grid).filter(({ grid }) => !closedStates.find(grid))
-    closedStates.insert(grid)
-    const results = openMoves
-      .map(move => depthLimitedSearch(move.grid, test, depthLimit, [...stack, move], Object.assign({}, closedStates)))
+const depthLimitedSearch = (node, test, depthLimit, closedNodes) => {
+  if (test(node.state)) {
+    return { result: node }
+  } else if (depthLimit) {
+    const openNeighbors = node
+      .neighborNodes()
+      .filter(n => !closedNodes.has(n.stateId()))
+    const results = openNeighbors
+      .map(neighbor =>
+        depthLimitedSearch(
+          neighbor,
+          test,
+          depthLimit - 1,
+          new Set(closedNodes).add(node.stateId())
+        )
+      )
       .filter(({ cutOff }) => !cutOff)
     return results.length
-      ? results.reduce(minBy(({ result }) => result.length))
+      ? results.reduce(minBy(({ result }) => result.depth))
       : { cutOff: true }
+  } else {
+    return { cutOff: true }
   }
 }
 
-const iterativeDepthLimitedSearch = (grid, [limit, ...nextLimit] = [24, 28, 31]) => {
-  const closedStates = new SortedSet(stateComparator)
-  const result = depthLimitedSearch(grid, isSolved, limit, [], closedStates)
+const iterativeDepthLimitedSearch = (state, [depthLimit, ...nextLimits] = [14, 15]) => {
+  const result = depthLimitedSearch(createNode({ state }), isSolved, depthLimit, new Set())
   if (!result.cutOff) {
-    return result.result
-  } else if (nextLimit.length) {
-    return iterativeDepthLimitedSearch(grid, nextLimit)
+    return toResult(result.result)
+  } else if (nextLimits.length) {
+    return iterativeDepthLimitedSearch(state, nextLimits)
   } else {
-    throw new Error(`Computation exceeds depth limit of ${limit}`)
+    throw new Error(`Computation exceeds depth limit of ${depthLimit}`)
   }
 }
 

@@ -44,16 +44,10 @@ const toMove = (initState, destState) => {
   return { from, to }
 }
 
-export const toResult = ({ state, ancestors }) => (
-  [...ancestors, state]
-    .reduce(
-      ({ result, prevState }, curState) => {
-        if (prevState !== null) {
-          result.push(toMove(prevState, curState))
-        }
-        return { result, prevState: curState }
-      },
-      { result: [], prevState: null }
-    )
-    .result
-)
+export const toResult = ({state, parent}, nextMoves = []) => {
+  if (parent) {
+    return toResult(parent, [toMove(parent.state, state), ...nextMoves])
+  } else {
+    return nextMoves
+  }
+}
