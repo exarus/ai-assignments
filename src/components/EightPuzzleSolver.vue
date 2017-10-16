@@ -1,6 +1,7 @@
 <template lang="pug">
 .root
-  .solvnecessaryghtPuzzle(:initial-grid.sync='grid')
+  .solver
+    EightPuzzle(:initial-grid.sync='grid')
     .control
       ElRow(type='flex')
         ElCol(:span='12')
