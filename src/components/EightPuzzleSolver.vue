@@ -1,7 +1,6 @@
 <template lang="pug">
 .root
-  .solver
-    EightPuzzle(:initial-grid.sync='grid')
+  .solvnecessaryghtPuzzle(:initial-grid.sync='grid')
     .control
       ElRow(type='flex')
         ElCol(:span='12')
@@ -17,7 +16,7 @@
               :label='item.label',
               :value='item.key'
             )
-  ElTable.solution(v-loading='searchInProgress', element-loading-text='Searching...', :data='solution')
+  ElTable.solution(v-show='solution', :data='solution')
     ElTableColumn(prop='from' label='From')
     ElTableColumn(prop='to' label='To')
 </template>
@@ -53,7 +52,7 @@ export default {
     grid: null,
     algorithm: algorithmOptions.keys().next().value,
     solution: null,
-    searchInProgress: false
+    searchFailed: false
   }),
   computed: {
     chosenMethod: ({ algorithm }) => algorithmOptions.get(algorithm).method,
@@ -72,7 +71,7 @@ export default {
       this.grid = shuffledGrid(this.maxShuffle)
     },
     findSolution () {
-      this.searchInProgress = true
+      this.searchFailed = false
       try {
         if (process.env.NODE_ENV !== 'production') {
           console.time('solutionTimeTaken')
@@ -87,7 +86,7 @@ export default {
           to: JSON.stringify(to.map(i => i + 1))
         }))
       } finally {
-        this.searchInProgress = false
+        this.searchFailed = true
       }
     }
   }
