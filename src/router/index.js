@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import GlobalNavigation from '@/components/GlobalNavigation'
 import EightPuzzleGame from '@/components/EightPuzzleGame'
 import EightPuzzleSolver from '@/components/EightPuzzleSolver'
+import VacuumCleanerWorld from '@/components/VacuumCleanerWorld'
 
 Vue.use(Router)
 
@@ -10,18 +11,23 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'GlobalNavigation',
+      name: GlobalNavigation.name,
       component: GlobalNavigation
     },
     {
       path: '/game-dev/8-puzzle',
-      name: 'EightPuzzleGame',
+      name: EightPuzzleGame.name,
       component: EightPuzzleGame
     },
     {
       path: '/ai/8-puzzle',
-      name: 'EightPuzzleSolver',
+      name: EightPuzzleSolver.name,
       component: EightPuzzleSolver
+    },
+    {
+      path: '/ai/vacuum-cleaner-world',
+      name: VacuumCleanerWorld.name,
+      component: VacuumCleanerWorld
     }
   ]
 })

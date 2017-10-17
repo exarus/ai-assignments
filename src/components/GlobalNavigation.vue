@@ -6,6 +6,8 @@
   ul
     li
       router-link(to='/ai/8-puzzle') 8-Puzzle Problem
+    li
+      router-link(to='/ai/vacuum-cleaner-world') Vacuum Cleaner World
   h2 GameDev
   ul
     li
