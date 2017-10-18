@@ -3,19 +3,17 @@ div(:class='stateClassObject')
 </template>
 
 <script>
-import { cellStates } from '@/util/vacuum-cleaner-world'
-
 export default {
   name: 'VacuumCleanerWorldCell',
   props: {
-    state: Number
+    state: Object
   },
   computed: {
     stateClassObject: ({ state }) => ({
-      clean: state === cellStates.clean,
-      dirty: state === cellStates.dirty,
-      wall: state === cellStates.wall,
-      vacuumCleaner: state === cellStates.vacuumCleaner
+      clean: state.isClean,
+      dirty: state.isDirty,
+      wall: state.isWall,
+      vacuumCleaner: state.hasVacuumCleaner
     })
   }
 }
@@ -23,7 +21,7 @@ export default {
 
 <style scoped>
 .dirty {
-  background: url('~@/assets/dirty.jpg');
+  background: url('~@/assets/dirty.jpg') center / contain no-repeat;
 }
 
 .wall {

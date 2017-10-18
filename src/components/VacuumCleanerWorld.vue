@@ -4,8 +4,7 @@
     i.el-icon-caret-left
   .grid-container
     .grid
-      template(v-for='row of grid')
-        VacuumCleanerWorldCell.cell(v-for='cell of row', :state='cell')
+      VacuumCleanerWorldCell(v-for='(cell, index) of cells', :key='index', :state='cell')
     .control
       ElButton(@click='nextStep' type='primary' size='large' round) Next Step
   router-link(to='/ai/8-puzzle')
@@ -13,36 +12,35 @@
 </template>
 
 <script>
+import flatten from 'ramda/src/flatten'
+import SimpleReflexAgent from '@/ai/vacuum-cleaner-world/SimpleReflexAgent'
+// import ModelBasedReflexAgent from '@/ai/vacuum-cleaner-world/ModelBasedReflexAgent'
+import Environment from '@/ai/vacuum-cleaner-world/Environment'
+import VacuumCleanerWorld from '@/ai/vacuum-cleaner-world/VacuumCleanerWorld'
 import VacuumCleanerWorldCell from './VacuumCleanerWorldCell'
-import { cellStates } from '@/util/vacuum-cleaner-world'
 
-const defaultGrid = `
-██████████
-█        █
-█ ██████ █
-█ █      █
-█ █    █ █
-█ █  @ █ █
-█ █    █ █
-█ ██ ███ █
-█        █
-██████████
-`.trim().split('\n').map(line =>
-    [...line].map(c => ({
-      ' ': cellStates.clean,
-      '█': cellStates.wall,
-      '@': cellStates.vacuumCleaner
-    }[c]))
-  )
+const world = new VacuumCleanerWorld(Environment(), SimpleReflexAgent())
 
 export default {
   name: 'VacuumCleanerWorld',
   components: { VacuumCleanerWorldCell },
   data: () => ({
-    grid: defaultGrid
+    world: {
+      environment: {},
+      agent: {
+        grid: []
+      }
+    }
   }),
+  created () {
+    this.world = world
+  },
+  computed: {
+    cells: ({ world }) => flatten(world.environment.grid)
+  },
   methods: {
     nextStep () {
+      this.world.performNextAction()
     }
   }
 }
