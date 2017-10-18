@@ -1,7 +1,8 @@
 import deepFreeze from 'deep-freeze'
 import clone from 'ramda/src/clone'
 import prop from 'ramda/src/prop'
-import actions, { isMove } from './actions'
+import { isMove } from './actions'
+import { getMoveDestination } from './util'
 
 export default () => {
   const grid = clone(defaultEnvironmentGrid)
@@ -82,13 +83,6 @@ const applyMove = (grid, action) => {
     return { bumpOccurred: false }
   }
 }
-
-const getMoveDestination = (move, [x, y]) => new Map([
-  [actions.moveNorth, [x - 1, y]],
-  [actions.moveSouth, [x + 1, y]],
-  [actions.moveWest, [x, y - 1]],
-  [actions.moveEast, [x, y + 1]]
-]).get(move)
 
 const getVacuumCleanerPosition = grid => grid.reduce(
   (result, row, i) => {
