@@ -3,11 +3,11 @@ import actions, { moveActions } from './actions'
 
 export default () => {
   const suck = () => {
-    this.energySpent++
+    this.energySpent += 2
     return actions.suck
   }
   const move = () => {
-    this.energySpent += 2
+    this.energySpent += 1
     return pickRandom(moveActions)
   }
   return {
