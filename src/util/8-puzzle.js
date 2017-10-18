@@ -53,7 +53,7 @@ export const shuffledGrid = (moveCount) => {
   const grid = clone(defaultGrid)
   for (let i = 0; i < moveCount; i++) {
     const neighbors = emptyCellNeighbors(grid)
-    const randomNeighbor = pickRandom(...neighbors)
+    const randomNeighbor = pickRandom(neighbors)
     swapCells(grid, emptyCellIndices(grid), randomNeighbor)
   }
   return grid

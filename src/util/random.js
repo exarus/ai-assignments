@@ -11,7 +11,8 @@ export const nextRandomUint8 = () => {
   return buffer[i++]
 }
 
-export const pickRandom = (...vals) => {
+export const pickRandom = (iterable) => {
+  const vals = [...iterable]
   const length = vals.length
   if (length === 0) {
     throw Error('Empty input not allowed')
