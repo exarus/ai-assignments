@@ -47,8 +47,9 @@ export default {
   data: () => ({
     world: createWorld(initialDirtAppearanceProbability, initialAgentKey),
     worldAgent: initialAgentKey,
+    selectedAgent: initialAgentKey,
     worldDirtAppearanceProbability: initialDirtAppearanceProbability,
-    selectedAgent: initialAgentKey
+    selectedDirtAppearanceProbability: initialDirtAppearanceProbability
   }),
   computed: {
     cells: ({ world }) => flatten(world.environment.grid),
@@ -61,8 +62,9 @@ export default {
   },
   methods: {
     recreateWorld () {
-      this.world = createWorld(this.selectedAgent)
+      this.world = createWorld(this.selectedDirtAppearanceProbability, this.selectedAgent)
       this.worldAgent = this.selectedAgent
+      this.worldDirtAppearanceProbability = this.selectedDirtAppearanceProbability
     },
     nextStep () {
       this.world.performNextAction()
