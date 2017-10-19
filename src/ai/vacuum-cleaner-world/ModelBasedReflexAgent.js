@@ -62,7 +62,6 @@ export default () => {
       if (isMove(prevAction)) perceiveMove(bumpOccurred)
       prevAction = isDirty ? suck() : moveOrIdle()
       iterationNum++
-      console.log(exploredGrid)
       return prevAction
     }
   }
