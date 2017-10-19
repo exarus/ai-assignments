@@ -5,9 +5,11 @@
   h2 Artificial Intelligence
   ul
     li
+      router-link(to='/ai/vacuum-cleaner-world') Vacuum Cleaner World
+    li
       router-link(to='/ai/8-puzzle') 8-Puzzle Problem
     li
-      router-link(to='/ai/vacuum-cleaner-world') Vacuum Cleaner World
+      router-link(to='/ai/wumpus-world') Wumpus World
   h2 GameDev
   ul
     li

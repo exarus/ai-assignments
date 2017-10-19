@@ -5,9 +5,9 @@
     .control
       ElRow(type='flex')
         ElCol(:span='12')
-          ElButton(@click='shuffle' type='primary' size='large' round) Shuffle
+          ElButton(type='primary' size='large' round @click='shuffle') Shuffle
         ElCol(:span='12')
-          ElButton(@click='findSolution' type='success' size='large' round) Find solution
+          ElButton(type='success' size='large' round @click='findSolution') Find solution
       ElRow(type='flex')
         ElCol(:span='12', :offset='12')
           ElSelect.algorithms(v-model='algorithm')
@@ -23,6 +23,7 @@
 </template>
 
 <script>
+import deepFreeze from 'deep-freeze'
 import EightPuzzle from '@/components/EightPuzzle'
 import { shuffledGrid } from '@/util/8-puzzle'
 import depthLimitedSearch from '@/ai/8-puzzle/depthLimitedSearch'
@@ -63,9 +64,9 @@ export default {
     }
   },
   created () {
-    this.algorithmOptions = Array.from(algorithmOptions,
+    this.algorithmOptions = deepFreeze(Array.from(algorithmOptions,
       ([key, object]) => ({key, ...object})
-    )
+    ))
   },
   methods: {
     shuffle () {
