@@ -7,7 +7,7 @@ export default () => {
     return actions.suck
   }
   const move = () => {
-    this.energySpent += 1
+    this.energySpent++
     return pickRandom(moveActions)
   }
   return {

@@ -1,15 +1,19 @@
 import deepFreeze from 'deep-freeze'
 import clone from 'ramda/src/clone'
 import prop from 'ramda/src/prop'
-import { isMove } from './actions'
-import { getMoveDestination } from './util'
+import actions, { isMove } from './actions'
+import { getPositionAfterMove } from './util'
 
-export default () => {
+export default (dirtAppearanceProbability) => {
   const grid = clone(defaultEnvironmentGrid)
   return {
     grid,
     acceptAction: (action) => {
       const { bumpOccurred = false } = isMove(action) ? applyMove(grid, action) : {}
+      if (action === actions.suck) {
+        applySoak(grid)
+      }
+      dirtyWorld(grid, dirtAppearanceProbability)
       return { bumpOccurred, isDirty: getVacuumCleanerCell(grid).isDirty }
     },
     get percept () {
@@ -71,17 +75,21 @@ const defaultEnvironmentGrid = deepFreeze(`
 
 const applyMove = (grid, action) => {
   const oldPosition = getVacuumCleanerPosition(grid)
-  const newPosition = getMoveDestination(action, oldPosition)
+  const newPosition = getPositionAfterMove(action, oldPosition)
   const [newX, newY] = newPosition
   const newCell = grid[newX][newY]
 
   if (newCell.isWall) {
     return { bumpOccurred: true }
   } else {
-    newCell.hasVacuumCleaner = true
     getVacuumCleanerCell(grid).hasVacuumCleaner = false
+    newCell.hasVacuumCleaner = true
     return { bumpOccurred: false }
   }
+}
+
+const applySoak = (grid) => {
+  getVacuumCleanerCell(grid).isDirty = false
 }
 
 const getVacuumCleanerPosition = grid => grid.reduce(
@@ -94,4 +102,14 @@ const getVacuumCleanerPosition = grid => grid.reduce(
 const getVacuumCleanerCell = (grid) => {
   const [x, y] = getVacuumCleanerPosition(grid)
   return grid[x][y]
+}
+
+const dirtyWorld = (grid, dirtAppearanceProbability) => {
+  for (const row of grid) {
+    for (const cell of row) {
+      if (Math.random() < dirtAppearanceProbability) {
+        cell.isDirty = true
+      }
+    }
+  }
 }

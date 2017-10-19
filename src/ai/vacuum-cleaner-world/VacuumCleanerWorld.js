@@ -1,6 +1,6 @@
 export default (environment, agent) => {
   let lastPercept = environment.percept
-  return Object.freeze({
+  return {
     environment,
     agent,
     performNextAction: () => {
@@ -10,5 +10,5 @@ export default (environment, agent) => {
         console.log(`Action: ${action}. Percept: ${JSON.stringify(lastPercept)}`)
       }
     }
-  })
+  }
 }

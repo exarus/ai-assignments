@@ -1,16 +1,29 @@
-import equals from 'ramda/src/equals'
-import { pickRandom } from '@/util/random'
-import { getMoveDestination } from './util'
+import minBy from 'ramda/src/minBy'
 import actions, { moveActions } from './actions'
 import { isMove } from '@/ai/vacuum-cleaner-world/actions'
-import { getMoveOrigin } from '@/ai/vacuum-cleaner-world/util'
+import { getPositionAfterMove } from './util'
+
+const initialPosition = Object.freeze([9, 9])
+
+const createCell = () => ({ lastVisited: -Infinity })
+const createRow = () => Array(19).fill(null).map(createCell)
+const createGrid = () => {
+  const grid = Array(19).fill(null).map(createRow)
+  const [x, y] = initialPosition
+  grid[x][y].isWall = false
+  return grid
+}
 
 export default () => {
-  const exploredGrid = Array(19).fill((() => Array(19).fill(null))())
-  exploredGrid[9][9] = { isWall: false }
+  const exploredGrid = createGrid()
+  let position = initialPosition
+  let iterationNum = 0
+  let prevAction
 
-  let lastMove
-  let position = [9, 9]
+  const getDestination = (action) => {
+    const [x, y] = getPositionAfterMove(action, position)
+    return exploredGrid[x][y]
+  }
 
   const suck = () => {
     this.energySpent += 2
@@ -19,33 +32,38 @@ export default () => {
 
   const moveOrIdle = () => {
     const possibleMoves = moveActions
-      .map(m => getMoveDestination(m, position))
-      .filter(([x, y]) => !(exploredGrid[x][y] && exploredGrid[x][y].isWall))
+      .map(action => ({ action, destination: getDestination(action) }))
+      .filter(({ destination: { isWall = false } }) => !isWall)
     if (possibleMoves.length) {
-      const bestMoves = possibleMoves.filter(m =>
-        !(lastMove && equals(m, getMoveOrigin(lastMove, position)))
-      )
-      lastMove = pickRandom(bestMoves.length ? bestMoves : possibleMoves)
-      this.energySpent += 1
-      return lastMove
+      this.energySpent++
+      return possibleMoves
+        .reduce(minBy(({ destination: { lastVisited } }) => lastVisited))
+        .action
     } else {
       return actions.idle
+    }
+  }
+
+  const perceiveMove = (bumpOccurred) => {
+    const [newX, newY] = getPositionAfterMove(prevAction, position)
+    if (bumpOccurred) {
+      exploredGrid[newX][newY].isWall = true
+    } else {
+      exploredGrid[newX][newY].isWall = false
+      const [oldX, oldY] = position
+      exploredGrid[oldX][oldY].lastVisited = iterationNum
+      position = [newX, newY]
     }
   }
 
   return {
     energySpent: 0,
     perceive ({ bumpOccurred, isDirty }) {
-      if (isMove(lastMove)) {
-        const [x, y] = getMoveDestination(lastMove, position)
-        if (bumpOccurred) {
-          exploredGrid[x][y] = exploredGrid[x][y] || { isWall: true }
-        } else {
-          exploredGrid[x][y] = exploredGrid[x][y] || { isWall: false }
-          position = [x, y]
-        }
-      }
-      return isDirty ? suck() : moveOrIdle()
+      if (isMove(prevAction)) perceiveMove(bumpOccurred)
+      prevAction = isDirty ? suck() : moveOrIdle()
+      iterationNum++
+      console.log(exploredGrid)
+      return prevAction
     }
   }
 }

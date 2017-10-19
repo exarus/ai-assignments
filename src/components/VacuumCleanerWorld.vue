@@ -6,39 +6,64 @@
     .grid
       VacuumCleanerWorldCell(v-for='(cell, index) of cells', :key='index', :state='cell')
     .control
-      ElButton(@click='nextStep' type='primary' size='large' round) Next Step
+      ElButton(type='primary' size='large' round :disabled='worldShouldBeRecreated', @click='nextStep') Next Step
+      ElSelect(v-model='selectedAgent' size='large')
+        ElOption(
+          v-for='a of agentOptions',
+          :key='a.key',
+          :label='a.label',
+          :value='a.key'
+        )
+      ElButton(type='warning' size='large' round, @click='recreateWorld') Recreate World
   router-link(to='/ai/8-puzzle')
   i.el-icon-caret-right
 </template>
 
 <script>
+import deepFreeze from 'deep-freeze'
 import flatten from 'ramda/src/flatten'
 import SimpleReflexAgent from '@/ai/vacuum-cleaner-world/SimpleReflexAgent'
-// import ModelBasedReflexAgent from '@/ai/vacuum-cleaner-world/ModelBasedReflexAgent'
+import ModelBasedReflexAgent from '@/ai/vacuum-cleaner-world/ModelBasedReflexAgent'
 import Environment from '@/ai/vacuum-cleaner-world/Environment'
 import VacuumCleanerWorld from '@/ai/vacuum-cleaner-world/VacuumCleanerWorld'
 import VacuumCleanerWorldCell from './VacuumCleanerWorldCell'
 
-const world = new VacuumCleanerWorld(Environment(), SimpleReflexAgent())
+const agentOptions = new Map([
+  ['modelBased', { label: 'Model-based agent', factoryMethod: ModelBasedReflexAgent }],
+  ['simple', { label: 'Simple reflex agent', factoryMethod: SimpleReflexAgent }]
+])
+
+const initialDirtAppearanceProbability = 0.01
+const initialAgentKey = agentOptions.keys().next().value
+
+const createWorld = (dirtAppearanceProbability, agentKey) => VacuumCleanerWorld(
+  Environment(dirtAppearanceProbability),
+  agentOptions.get(agentKey).factoryMethod()
+)
 
 export default {
   name: 'VacuumCleanerWorld',
   components: { VacuumCleanerWorldCell },
   data: () => ({
-    world: {
-      environment: {},
-      agent: {
-        grid: []
-      }
-    }
+    world: createWorld(initialDirtAppearanceProbability, initialAgentKey),
+    worldAgent: initialAgentKey,
+    worldDirtAppearanceProbability: initialDirtAppearanceProbability,
+    selectedAgent: initialAgentKey
   }),
-  created () {
-    this.world = world
-  },
   computed: {
-    cells: ({ world }) => flatten(world.environment.grid)
+    cells: ({ world }) => flatten(world.environment.grid),
+    worldShouldBeRecreated: ({ worldAgent, selectedAgent }) => worldAgent !== selectedAgent
+  },
+  created () {
+    this.agentOptions = deepFreeze(Array.from(agentOptions,
+      ([key, object]) => ({ key, ...object })
+    ))
   },
   methods: {
+    recreateWorld () {
+      this.world = createWorld(this.selectedAgent)
+      this.worldAgent = this.selectedAgent
+    },
     nextStep () {
       this.world.performNextAction()
     }
@@ -60,10 +85,11 @@ export default {
 
   & .control {
     width: 74vmin;
-    margin: 10px;
+    display: flex;
+    justify-content: center;
 
-    & button {
-      font-size: 1.5em;
+    & > * {
+      margin: 10px 5px;
     }
   }
 }
@@ -74,6 +100,7 @@ export default {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
+  grid-gap: 1px;
   justify-content: center;
   height: 74vmin;
   width: 74vmin;
