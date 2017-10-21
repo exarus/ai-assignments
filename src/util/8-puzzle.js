@@ -1,6 +1,6 @@
 import clone from 'ramda/src/clone'
 import last from 'ramda/src/last'
-import { pickRandom } from '@/util/random'
+import { pickRandom } from '@/util/secureRandom'
 
 export const defaultGrid = [
   [1, 2, 3],
