@@ -43,9 +43,13 @@ const hotMiddleware = require('webpack-hot-middleware')(compiler, {
 //   })
 // })
 
+// enable hot-reload and state-preserving
+// compilation error display
+app.use(hotMiddleware)
+
 // proxy api requests
 Object.keys(proxyTable).forEach(function (context) {
-  const options = proxyTable[context]
+  let options = proxyTable[context]
   if (typeof options === 'string') {
     options = { target: options }
   }
@@ -57,10 +61,6 @@ app.use(require('connect-history-api-fallback')())
 
 // serve webpack bundle output
 app.use(devMiddleware)
-
-// enable hot-reload and state-preserving
-// compilation error display
-app.use(hotMiddleware)
 
 // serve pure static assets
 const staticPath = path.posix.join(config.dev.assetsPublicPath, config.dev.assetsSubDirectory)
