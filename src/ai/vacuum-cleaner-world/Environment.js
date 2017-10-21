@@ -65,7 +65,7 @@ const defaultEnvironmentGrid = deepFreeze(`
 █        █
 ██████████
 `.trim().split('\n').map(line =>
-    [...line].map(c => ({
+    [...line.trim()].map(c => ({
       ' ': createCell({ isClean: true }),
       '█': createCell({ isWall: true }),
       '@': createCell({ hasVacuumCleaner: true })

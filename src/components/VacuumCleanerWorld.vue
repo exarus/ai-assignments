@@ -16,7 +16,7 @@
         )
       ElButton(type='warning' size='large' round, @click='recreateWorld') Recreate World
   router-link(to='/ai/8-puzzle')
-  i.el-icon-caret-right
+    i.el-icon-caret-right
 </template>
 
 <script>
@@ -46,6 +46,7 @@ export default {
   components: { VacuumCleanerWorldCell },
   data: () => ({
     world: createWorld(initialDirtAppearanceProbability, initialAgentKey),
+    lastAction: '',
     worldAgent: initialAgentKey,
     selectedAgent: initialAgentKey,
     worldDirtAppearanceProbability: initialDirtAppearanceProbability,

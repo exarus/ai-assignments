@@ -1,5 +1,7 @@
 <template lang="pug">
 .root
+  router-link(to='/')
+    i.el-icon-caret-left
   .solver
     EightPuzzle(:initial-grid.sync='grid')
     .control
@@ -17,9 +19,14 @@
               :label='item.label',
               :value='item.key'
             )
-  ElTable.solution(v-show='solution', :data='solution')
-    ElTableColumn(prop='from' label='From')
-    ElTableColumn(prop='to' label='To')
+  .solution
+    h5 Solution
+    ElTable.solution(:data='solution' border max-height='580')
+      ElTableColumn(prop='from' label='From')
+      ElTableColumn(prop='to' label='To')
+      p(slot='empty') {{ solution ? '8-Puzzle is already solved' : "Solution will be displayed here" }}
+  router-link(to='/ai/wumpus-world')
+    i.el-icon-caret-right
 </template>
 
 <script>
@@ -53,8 +60,7 @@ export default {
   data: () => ({
     grid: null,
     algorithm: algorithmOptions.keys().next().value,
-    solution: null,
-    searchFailed: false
+    solution: null
   }),
   computed: {
     chosenMethod: ({ algorithm }) => algorithmOptions.get(algorithm).method,
@@ -73,7 +79,6 @@ export default {
       this.grid = shuffledGrid(this.maxShuffle)
     },
     findSolution () {
-      this.searchFailed = false
       try {
         if (process.env.NODE_ENV !== 'production') {
           console.time('solutionTimeTaken')
@@ -87,8 +92,16 @@ export default {
           from: JSON.stringify(from.map(i => i + 1)),
           to: JSON.stringify(to.map(i => i + 1))
         }))
-      } finally {
-        this.searchFailed = true
+        this.$notify({
+          title: 'Success',
+          message: 'Solution found',
+          type: 'success'
+        })
+      } catch (err) {
+        this.$notify.error({
+          title: 'Error',
+          message: err.message
+        })
       }
     }
   }
@@ -100,7 +113,7 @@ export default {
   color: #5e6d82;
   font-size: 3.6vmin;
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: flex-start;
 
   & > .solver {
@@ -128,8 +141,12 @@ export default {
   }
 
   & > .solution {
-    width: 25%;
-    margin: 10px;
+    margin: 0 10px;
+    text-align: center;
+
+    & > h5 {
+      margin-bottom: 10px;
+    }
   }
 }
 </style>
