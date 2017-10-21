@@ -2,7 +2,7 @@
   "presets": [
     ["env", {
       "modules": false,
-      "useBuiltIns": true,
+      "useBuiltIns": "usage",
       "targets": {
         "browsers": [
           "last 2 Chrome version",
@@ -17,7 +17,7 @@
         ]
       }
     }],
-    "stage-3"
+    "stage-2"
   ],
   "plugins": [
     "transform-runtime",
