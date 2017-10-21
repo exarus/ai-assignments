@@ -29,15 +29,15 @@ const hillClimbingSearch = ({ state, parent, sideMovesLimit = 100 }) => {
       state: chooseStochastically(neighbors).state,
       parent: { state, parent }
     })
-  } else if (sideMovesLimit > 0) {
+  }
+  if (sideMovesLimit > 0) {
     return hillClimbingSearch({
       state: pickRandom(neighbors).state,
       parent: { state, parent },
       sideMovesLimit: sideMovesLimit - 1
     })
-  } else {
-    throw Error('Solution is stuck in local maximum')
   }
+  throw Error('Solution is stuck in local minimum')
 }
 
 export default state => toResult(hillClimbingSearch({ state }))
