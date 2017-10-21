@@ -42,7 +42,7 @@ const algorithmOptions = new Map([
     maxShuffle: 16
   }],
   ['Hill', {
-    label: 'Hill climbing with side moves and random relaunch',
+    label: 'Stochastic Hill climbing with sideways moves',
     method: hillClimbingSearch
   }]
 ])
