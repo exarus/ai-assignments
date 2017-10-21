@@ -36,7 +36,7 @@ export const neighborStates = (state) => {
   return emptyCellNeighbors(state).map(cell => withSwappedCells(state, cell, emptyCell))
 }
 
-const toMove = (initState, destState) => {
+export const toMove = (initState, destState) => {
   const to = emptyCellIndices(initState)
   const from = emptyCellNeighbors(initState).filter(
     ([x, y]) => destState[x][y] === emptyCellValue
@@ -44,6 +44,7 @@ const toMove = (initState, destState) => {
   return { from, to }
 }
 
+// TODO rewrite tail recursive
 export const toResult = ({ state, parent }, nextMoves = []) => {
   return parent
     ? toResult(parent, [toMove(parent.state, state), ...nextMoves])
