@@ -2,6 +2,7 @@ import min from 'ramda/src/min'
 import prop from 'ramda/src/prop'
 import propEq from 'ramda/src/propEq'
 import sum from 'ramda/src/sum'
+import trampa from 'trampa'
 import heuristics from '@/ai/8-puzzle/heuristics'
 import { neighborStates, toMove } from '@/ai/8-puzzle/util'
 import { pickRandom } from '@/util/random'
@@ -26,31 +27,29 @@ const chooseStochastically = (nodes) => {
   )
 }
 
-const defaultSideMovesLimit = 100
+// TODO rewrite as tail recursive when JS-engines will support that
+const hillClimbingSearch = ({ state, ancestors = [], sideMovesLimit = 100 }) => {
+  const stateCost = heuristics(state)
+  if (!stateCost) {
+    return trampa.wrap({ state, ancestors })
+  }
+  const neighbors = neighborStates(state).map(state => ({ state, cost: heuristics(state) }))
+  const bestNeighborCost = neighbors.map(prop('cost')).reduce(min)
 
-const hillClimbingSearch = (state) => {
-  const ancestors = []
-  let sideMovesLimit = defaultSideMovesLimit
-  while (true) {
-    const stateCost = heuristics(state)
-    if (!stateCost) {
-      return { state, ancestors }
-    }
-    const neighbors = neighborStates(state).map(state => ({ state, cost: heuristics(state) }))
-    const bestNeighborCost = neighbors.map(prop('cost')).reduce(min)
-
-    if (bestNeighborCost < stateCost) {
-      ancestors.push(state)
-      state = chooseStochastically(neighbors).state
-      sideMovesLimit = defaultSideMovesLimit
-    } else if (sideMovesLimit > 0) {
-      ancestors.push(state)
-      state = pickRandom(neighbors).state
-      sideMovesLimit = sideMovesLimit - 1
-    } else {
-      throw Error('Solution is stuck in local minimum')
-    }
+  if (bestNeighborCost < stateCost) {
+    return trampa.lazy(() => hillClimbingSearch({
+      state: chooseStochastically(neighbors).state,
+      ancestors: [...ancestors, state]
+    }))
+  } else if (sideMovesLimit > 0) {
+    return trampa.lazy(() => hillClimbingSearch({
+      state: pickRandom(neighbors).state,
+      ancestors: [...ancestors, state],
+      sideMovesLimit: sideMovesLimit - 1
+    }))
+  } else {
+    throw Error('Solution is stuck in local minimum')
   }
 }
 
-export default state => toResult(hillClimbingSearch(state))
+export default state => toResult(hillClimbingSearch({ state }).run())

@@ -1,6 +1,7 @@
 import adjust from 'ramda/src/adjust'
 import compose from 'ramda/src/compose'
 import update from 'ramda/src/update'
+import trampa from 'trampa'
 import { emptyCellIndices, emptyCellNeighbors, emptyCellValue } from '@/util/8-puzzle'
 
 export const stateComparator = (state1, state2) => {
@@ -44,9 +45,11 @@ export const toMove = (initState, destState) => {
   return { from, to }
 }
 
-// TODO rewrite tail recursive
-export const toResult = ({ state, parent }, nextMoves = []) => {
+// TODO rewrite as tail recursive when JS-engines will support that
+const toMoves = ({ state, parent }, movesQueue = []) => {
   return parent
-    ? toResult(parent, [toMove(parent.state, state), ...nextMoves])
-    : nextMoves
+    ? trampa.lazy(() => toMoves(parent, [toMove(parent.state, state), ...movesQueue]))
+    : trampa.wrap(movesQueue)
 }
+
+export const toResult = o => toMoves(o).run()

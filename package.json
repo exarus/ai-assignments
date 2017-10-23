@@ -19,6 +19,7 @@
     "mnemonist": "^0.15.0",
     "mobile-drag-drop": "^2.2.0",
     "ramda": "^0.25.0",
+    "trampa": "^1.0.0",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1"
   },
