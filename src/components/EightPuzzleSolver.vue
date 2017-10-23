@@ -30,7 +30,9 @@
 </template>
 
 <script>
+import map from 'ramda/src/map'
 import deepFreeze from 'deep-freeze'
+import { Notification } from 'element-ui'
 import EightPuzzle from '@/components/EightPuzzle'
 import { shuffledGrid } from '@/util/8-puzzle'
 import depthLimitedSearch from '@/ai/8-puzzle/depthLimitedSearch'
@@ -88,17 +90,15 @@ export default {
           console.timeEnd('solutionTimeTaken')
           console.log(solution)
         }
-        this.solution = solution.map(({ from, to }) => ({
-          from: JSON.stringify(from.map(i => i + 1)),
-          to: JSON.stringify(to.map(i => i + 1))
-        }))
-        this.$notify({
+        const normalizeArray = arr => JSON.stringify(arr.map(i => i + 1))
+        this.solution = solution.map(map(normalizeArray))
+        Notification({
           title: 'Success',
           message: 'Solution found',
           type: 'success'
         })
       } catch (err) {
-        this.$notify.error({
+        Notification({
           title: 'Error',
           message: err.message
         })
