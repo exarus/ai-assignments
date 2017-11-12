@@ -37,7 +37,7 @@ const initialDirtAppearanceProbability = 0.01
 const initialAgentKey = agentOptions.keys().next().value
 
 const createWorld = (dirtAppearanceProbability, agentKey) => VacuumCleanerWorld(
-  Environment(dirtAppearanceProbability),
+  Environment({ dirtAppearanceProbability }),
   agentOptions.get(agentKey).factoryMethod()
 )
 

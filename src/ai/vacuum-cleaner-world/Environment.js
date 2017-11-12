@@ -4,7 +4,7 @@ import prop from 'ramda/src/prop'
 import actions, { isMove } from './actions'
 import { getPositionAfterMove } from './util'
 
-export default (dirtAppearanceProbability) => {
+export default ({ dirtAppearanceProbability }) => {
   const grid = clone(defaultEnvironmentGrid)
   return {
     grid,
