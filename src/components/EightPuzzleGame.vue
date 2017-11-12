@@ -5,41 +5,35 @@
     .control
       ElButton(v-if='gameInProgress', @click='startNewGame' type='warning' size='large') Restart
       ElButton(v-else @click='startNewGame' type='primary' size='large') Start Game
-  ElDialog(
-    title='You won!',
-    :width='dialogWidth()'
-    center
-    :visible.sync='winNotificationVisible'
-  )
-    .restart-question Do you want to start a new game?
-    span(slot='footer')
-      ElButton(@click='finishGame') Cancel
-      ElButton(type='primary', @click='startNewGame') Confirm
+  GameStartDialog(:visible.sync='startDialogVisible')
+  GameWinDialog(:visible.sync='winDialogVisible')
 </template>
 
 <script>
 import equals from 'ramda/src/equals'
-import EightPuzzle from '@/components/EightPuzzle'
+import EightPuzzle from './EightPuzzle'
+import GameStartDialog from './GameStartDialog'
 import { defaultGrid, shuffledGrid } from '@/util/8-puzzle'
 
 const gameInProgressStorageKey = 'gameInProgress'
 
 export default {
   name: 'EightPuzzleGame',
-  components: { EightPuzzle },
+  components: { EightPuzzle, GameStartDialog },
   data () {
     const storedInProgress = localStorage.getItem(gameInProgressStorageKey)
     return {
       grid: null,
       gameInProgress: storedInProgress !== null ? JSON.parse(storedInProgress) : false,
-      winNotificationVisible: false
+      startDialogVisible: false,
+      winDialogVisible: false
     }
   },
   watch: {
     grid (newGrid) {
       if (this.gameInProgress && equals(newGrid, defaultGrid)) {
-        this.winNotificationVisible = true
         this.gameInProgress = false
+        this.winNotificationVisible = true
       }
     },
     gameInProgress (gameInProgress) {
@@ -48,12 +42,12 @@ export default {
   },
   methods: {
     startNewGame () {
-      this.winNotificationVisible = false
+      this.winDialogVisible = false
       this.gameInProgress = true
       this.grid = shuffledGrid(200)
     },
     finishGame () {
-      this.winNotificationVisible = false
+      this.winDialogVisible = false
       this.gameInProgress = false
     },
     dialogWidth () {
@@ -90,12 +84,6 @@ export default {
         font-size: 1.33em;
       }
     }
-  }
-
-  & .restart-question {
-    display: flex;
-    justify-content: center;
-    align-items: center;
   }
 }
 </style>

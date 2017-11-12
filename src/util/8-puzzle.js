@@ -1,12 +1,13 @@
 import clone from 'ramda/src/clone'
 import last from 'ramda/src/last'
+import deepFreeze from 'deep-freeze'
 import { pickRandom } from '@/util/secureRandom'
 
-export const defaultGrid = [
+export const defaultGrid = deepFreeze([
   [1, 2, 3],
   [4, 5, 6],
   [7, 8, 9]
-]
+])
 
 export const emptyCellValue = last(last(defaultGrid))
 

@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import deepFreeze from 'deep-freeze'
+import toSelectOptions from '@/util/toSelectOptions'
 import flatten from 'ramda/src/flatten'
 import SimpleReflexAgent from '@/ai/vacuum-cleaner-world/SimpleReflexAgent'
 import ModelBasedReflexAgent from '@/ai/vacuum-cleaner-world/ModelBasedReflexAgent'
@@ -57,9 +57,7 @@ export default {
     worldShouldBeRecreated: ({ worldAgent, selectedAgent }) => worldAgent !== selectedAgent
   },
   created () {
-    this.agentOptions = deepFreeze(Array.from(agentOptions,
-      ([key, object]) => ({ key, ...object })
-    ))
+    this.agentOptions = toSelectOptions(agentOptions)
   },
   methods: {
     recreateWorld () {
