@@ -1,6 +1,11 @@
-# ai-assignments
+# AI and GameDev assignments
 
-> Solution for the Artificial intelligence programming assignment
+Serverless web app with several university assignments. It contains:
+* Solution for the Artificial intelligence programming assignments:
+    1. Vacuum Cleaner World
+    2. 8-puzzle problem
+* Solution for GameDev assignment:
+    1. 8-puzzle game
 
 ## Build Setup
 
