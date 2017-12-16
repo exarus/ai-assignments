@@ -1,5 +1,4 @@
-dist/
-test/unit/coverage
+/dist/
 
 # Created by https://www.gitignore.io/api/git,vim,node,linux,macos,windows,webstorm,sublimetext,visualstudio,visualstudiocode
 
