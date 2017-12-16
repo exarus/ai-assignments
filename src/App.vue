@@ -4,9 +4,11 @@
 </template>
 
 <script>
+import 'mobile-drag-drop/default.css'
 import { polyfill as dragAndDropPolyfill } from 'mobile-drag-drop'
+import { scrollBehaviourDragImageTranslateOverride as dragImageTranslateOverride } from 'mobile-drag-drop/scroll-behaviour'
 
-dragAndDropPolyfill()
+dragAndDropPolyfill({ dragImageTranslateOverride })
 
 export default {
   name: 'app'
@@ -14,8 +16,6 @@ export default {
 </script>
 
 <style>
-@import '~mobile-drag-drop/default.css';
-
 #app {
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
