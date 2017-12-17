@@ -1,10 +1,16 @@
 import Vue from 'vue'
 import { Button, ButtonGroup, Col, Dialog, Option, Row, Select, Table, TableColumn } from 'element-ui'
+import lang from 'element-ui/lib/locale/lang/en'
+import locale from 'element-ui/lib/locale'
 import App from './App'
 import router from './router'
 
 Vue.config.productionTip = false
 
+// configure language
+locale.use(lang)
+
+// import components
 Vue.use(Button)
 Vue.use(ButtonGroup)
 Vue.use(Dialog)
