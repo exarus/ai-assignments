@@ -3,7 +3,7 @@ import map from 'ramda/src/map'
 import deepFreeze from 'deep-freeze'
 import { Notification } from 'element-ui'
 import EightPuzzle from '@/components/EightPuzzle'
-import { shuffledGrid } from '@/util/8-puzzle'
+import { shuffledGrid, defaultGrid } from '@/util/8-puzzle'
 import depthLimitedSearch from '@/ai/8-puzzle/depthLimitedSearch'
 import aStarSearch from '@/ai/8-puzzle/aStarSearch'
 import hillClimbingSearch from '@/ai/8-puzzle/hillClimbingSearch'
@@ -29,7 +29,7 @@ export default {
   name: 'EightPuzzleSolver',
   components: { EightPuzzle },
   data: () => ({
-    grid: null,
+    grid: defaultGrid,
     algorithm: algorithmOptions.keys().next().value,
     solution: null
   }),
@@ -78,34 +78,42 @@ export default {
 </script>
 
 <template lang="pug">
-  .root
-    router-link(to='/')
-      i.el-icon-caret-left
-    .solver
-      EightPuzzle(:grid.sync='grid')
-      .control
-        ElRow(type='flex')
-          ElCol(:span='12')
-            ElButton(type='primary' size='large' round @click='shuffle') Shuffle
-          ElCol(:span='12')
-            ElButton(type='success' size='large' round @click='findSolution') Find solution
-        ElRow(type='flex')
-          ElCol(:span='12', :offset='12')
-            ElSelect.algorithms(v-model='algorithm')
-              ElOption(
+.root
+  router-link(to='/')
+    i.el-icon-caret-left
+  .solver
+    EightPuzzle(:grid.sync='grid')
+    .control
+      ElRow(type='flex')
+        ElCol(:span='12')
+          ElButton(
+            type='primary'
+            size='large'
+            round
+            @click='shuffle'
+          ) Shuffle
+        ElCol(:span='12')
+          ElButton(
+            type='success'
+            size='large'
+            round
+            @click='findSolution'
+          ) Find solution
+      ElRow(type='flex')
+        ElCol(:span='12', :offset='12')
+          ElSelect.algorithms(v-model='algorithm')
+            ElOption(
               v-for='item of algorithmOptions',
               :key='item.key',
               :label='item.label',
               :value='item.key'
-              )
-    .solution
-      h5 Solution
-      ElTable.solution(:data='solution' border max-height='580')
-        ElTableColumn(prop='from' label='From')
-        ElTableColumn(prop='to' label='To')
-        p(slot='empty') {{ solution ? '8-Puzzle is already solved' : "Solution will be displayed here" }}
-    router-link(to='/ai/wumpus-world')
-      i.el-icon-caret-right
+            )
+  .solution
+    h5 Solution
+    ElTable.solution(:data='solution' border max-height='580')
+      ElTableColumn(prop='from' label='From')
+      ElTableColumn(prop='to' label='To')
+      p(slot='empty') {{ solution ? '8-Puzzle is already solved' : "Solution will be displayed here" }}
 </template>
 
 <style scoped lang="postcss">
