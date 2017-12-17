@@ -2,26 +2,17 @@
 import clone from 'ramda/src/clone'
 import { defaultGrid, emptyCellValue as emptyCell, emptyCellIndices, cellIndices, manhattanDistance } from '@/util/8-puzzle'
 
-// const gridStorageKey = 'grid'
-
 export default {
   name: 'EightPuzzle',
+
   props: {
     grid: {
       type: Array,
       default: defaultGrid
     }
   },
-  data () {
-    // let grid
-    // if (this.initialGrid != null) {
-    //   grid = clone(this.initialGrid)
-    // } else {
-    //   const savedGrid = localStorage.getItem(gridStorageKey)
-    //   grid = savedGrid !== null ? JSON.parse(savedGrid) : defaultGrid
-    //   this.$emit('update:initialGrid', grid)
-    // }
 
+  data () {
     return {
       draggedCell: 0
     }
@@ -37,29 +28,35 @@ export default {
     dragCell (cell) {
       this.draggedCell = cell
     },
+
     dropCell (targetCell) {
-      const isEmptyDragged = this.draggedCell === emptyCell
-      if (isEmptyDragged || targetCell === emptyCell) {
+      const isEmptyDragged = this.isEmpty(this.draggedCell)
+      if (isEmptyDragged || this.isEmpty(targetCell)) {
         const nonEmptyCellIndices = this.cellIndices(isEmptyDragged ? targetCell : this.draggedCell)
         this.swapCells(nonEmptyCellIndices, this.emptyCellIndices)
       }
       this.draggedCell = 0
     },
+
     isDraggable (cell) {
       const distance = manhattanDistance(this.cellIndices(cell), this.emptyCellIndices)
       return distance === 1
     },
+
     cellIndices (cell) {
       return cellIndices(this.grid, cell)
     },
+
+    isEmpty (cell) {
+      return cell === emptyCell
+    },
+
     swapCells ([x1, y1], [x2, y2]) {
       const grid = clone(this.grid)
       const tmp = grid[x1][y1]
       grid[x1][y1] = grid[x2][y2]
       grid[x2][y2] = tmp
-
-      // localStorage.setItem(gridStorageKey, JSON.stringify(grid))
-      this.$emit('update:initialGrid', grid)
+      this.$emit('update:grid', grid)
     }
   }
 }
@@ -77,7 +74,7 @@ export default {
         @dragover.prevent='',
         @dragenter.prevent='',
         @drop.prevent='dropCell(cell)'
-      ) {{cell !== emptyCell ? cell : ''}}
+      ) {{ isEmpty(cell) ? '' : cell }}
 </template>
 
 <style scoped lang="postcss">
@@ -88,8 +85,6 @@ export default {
   display: flex;
   flex-flow: column;
   justify-content: space-evenly;
-
-  /* align-items: center; */
   height: 74.2vmin;
   width: 74.2vmin;
 
