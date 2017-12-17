@@ -82,7 +82,7 @@ export default {
     router-link(to='/')
       i.el-icon-caret-left
     .solver
-      EightPuzzle(:initial-grid.sync='grid')
+      EightPuzzle(:grid.sync='grid')
       .control
         ElRow(type='flex')
           ElCol(:span='12')
@@ -108,7 +108,7 @@ export default {
       i.el-icon-caret-right
 </template>
 
-<style scoped>
+<style scoped lang="postcss">
 .root {
   color: #5e6d82;
   font-size: 3.6vmin;

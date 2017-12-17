@@ -1,53 +1,45 @@
 <script>
-import equals from 'ramda/src/equals'
 import clone from 'ramda/src/clone'
-import { defaultGrid, emptyCellValue, emptyCellIndices, cellIndices, manhattanDistance } from '@/util/8-puzzle'
+import { defaultGrid, emptyCellValue as emptyCell, emptyCellIndices, cellIndices, manhattanDistance } from '@/util/8-puzzle'
 
-const gridStorageKey = 'grid'
+// const gridStorageKey = 'grid'
 
 export default {
   name: 'EightPuzzle',
   props: {
-    initialGrid: Array
+    grid: {
+      type: Array,
+      default: defaultGrid
+    }
   },
   data () {
-    let grid
-    if (this.initialGrid != null) {
-      grid = clone(this.initialGrid)
-    } else {
-      const savedGrid = localStorage.getItem(gridStorageKey)
-      grid = savedGrid !== null ? JSON.parse(savedGrid) : defaultGrid
-      this.$emit('update:initialGrid', grid)
-    }
-    this.emptyCell = emptyCellValue
+    // let grid
+    // if (this.initialGrid != null) {
+    //   grid = clone(this.initialGrid)
+    // } else {
+    //   const savedGrid = localStorage.getItem(gridStorageKey)
+    //   grid = savedGrid !== null ? JSON.parse(savedGrid) : defaultGrid
+    //   this.$emit('update:initialGrid', grid)
+    // }
+
     return {
-      grid,
       draggedCell: 0
     }
   },
+
   computed: {
     emptyCellIndices () {
       return emptyCellIndices(this.grid)
     }
   },
-  watch: {
-    initialGrid (newGrid) {
-      if (!equals(newGrid, this.grid)) {
-        this.grid = clone(newGrid)
-      }
-    },
-    grid (newGrid) {
-      this.$emit('update:initialGrid', newGrid)
-      localStorage.setItem(gridStorageKey, JSON.stringify(newGrid))
-    }
-  },
+
   methods: {
     dragCell (cell) {
       this.draggedCell = cell
     },
     dropCell (targetCell) {
-      const isEmptyDragged = this.draggedCell === this.emptyCell
-      if (isEmptyDragged || targetCell === this.emptyCell) {
+      const isEmptyDragged = this.draggedCell === emptyCell
+      if (isEmptyDragged || targetCell === emptyCell) {
         const nonEmptyCellIndices = this.cellIndices(isEmptyDragged ? targetCell : this.draggedCell)
         this.swapCells(nonEmptyCellIndices, this.emptyCellIndices)
       }
@@ -61,9 +53,13 @@ export default {
       return cellIndices(this.grid, cell)
     },
     swapCells ([x1, y1], [x2, y2]) {
-      const tmp = this.grid[x1][y1]
-      this.$set(this.grid[x1], y1, this.grid[x2][y2])
-      this.$set(this.grid[x2], y2, tmp)
+      const grid = clone(this.grid)
+      const tmp = grid[x1][y1]
+      grid[x1][y1] = grid[x2][y2]
+      grid[x2][y2] = tmp
+
+      // localStorage.setItem(gridStorageKey, JSON.stringify(grid))
+      this.$emit('update:initialGrid', grid)
     }
   }
 }
@@ -73,18 +69,18 @@ export default {
   .grid
     .row(v-for='row of grid')
       .cell(
-      v-for='cell of row',
-      :key='cell',
-      :class='{ immovable: !isDraggable(cell) }',
-      :draggable='isDraggable(cell).toString()',
-      @dragstart='dragCell(cell)',
-      @dragover.prevent='',
-      @dragenter.prevent='',
-      @drop.prevent='dropCell(cell)'
+        v-for='cell of row',
+        :key='cell',
+        :class='{ immovable: !isDraggable(cell) }',
+        :draggable='isDraggable(cell).toString()',
+        @dragstart='dragCell(cell)',
+        @dragover.prevent='',
+        @dragenter.prevent='',
+        @drop.prevent='dropCell(cell)'
       ) {{cell !== emptyCell ? cell : ''}}
 </template>
 
-<style scoped>
+<style scoped lang="postcss">
 .grid {
   background: #e6eefb;
   font-size: 3.6vmin;

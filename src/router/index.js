@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import VacuumCleanerWorld from '@/components/VacuumCleanerWorld'
 import GlobalNavigation from '@/components/GlobalNavigation'
-import EightPuzzleGame from '@/components/EightPuzzleGame'
+import VacuumCleanerWorld from '@/components/VacuumCleanerWorld'
 import EightPuzzleSolver from '@/components/EightPuzzleSolver'
+import EightPuzzleGame from '@/components/EightPuzzleGame/EightPuzzleGame'
 
 Vue.use(Router)
 
