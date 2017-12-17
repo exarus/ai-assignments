@@ -16,22 +16,20 @@ export default {
   },
 
   data: () => ({
-    game: null,
+    game: Game.load(),
     state: 'init'
   }),
 
   watch: {
     state (state) {
       localStorage.setItem(viewStateStorageKey, state)
-      if (state === 'inProgress') {
-        this.game = Game.load()
-      }
     },
 
     game: {
       handler (game) {
+        game.save()
         if (game.isPuzzleSolved()) {
-          this.finishGame()
+          this.winGame()
         }
       },
 
@@ -40,9 +38,9 @@ export default {
   },
 
   created () {
-    const storedState = localStorage.getItem(viewStateStorageKey)
-    if (storedState !== null) {
-      this.state = storedState
+    const viewState = localStorage.getItem(viewStateStorageKey)
+    if (viewState !== null) {
+      this.state = viewState
     }
   },
 
@@ -56,8 +54,12 @@ export default {
       this.game = game
     },
 
-    finishGame () {
+    winGame () {
       this.state = 'winDialog'
+    },
+
+    returnToInit () {
+      this.state = 'init'
     }
   }
 }
@@ -66,7 +68,7 @@ export default {
 <template lang="pug">
 .root
   .game
-    EightPuzzle(:grid.sync='grid')
+    EightPuzzle(:grid.sync='game.grid')
     .control
       ElButton(
         v-if="state === 'inProgress'",
@@ -85,8 +87,9 @@ export default {
     @gameStarted="game => startNewGame(game)"
   )
   GameWinDialog(
-    :visible="state === 'winDialog'",
-    @gameStarted="game => startNewGame(game)"
+    v-if="state === 'winDialog'",
+    @prepareNewGame="prepareNewGame",
+    @gameFinished="returnToInit"
   )
 </template>
 

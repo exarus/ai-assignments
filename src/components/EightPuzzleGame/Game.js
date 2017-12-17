@@ -16,7 +16,7 @@ export const gameSizes = new Map([
 const gameGridStorageKey = 'gameGrid'
 
 export default class Game {
-  constructor (grid = shuffledGrid(200)) {
+  constructor ({ grid = shuffledGrid(200) }) {
     this.grid = grid
   }
 
@@ -30,10 +30,7 @@ export default class Game {
 
   static load () {
     const storedGrid = localStorage.getItem(gameGridStorageKey)
-    if (storedGrid === null) {
-      throw Error('Game not saved')
-    }
-    const grid = JSON.parse(storedGrid)
-    return new Game(grid)
+    const grid = storedGrid !== null ? JSON.parse(storedGrid) : defaultGrid
+    return new Game({ grid })
   }
 }
