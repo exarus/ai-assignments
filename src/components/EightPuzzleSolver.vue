@@ -1,34 +1,3 @@
-<template lang="pug">
-.root
-  router-link(to='/')
-    i.el-icon-caret-left
-  .solver
-    EightPuzzle(:initial-grid.sync='grid')
-    .control
-      ElRow(type='flex')
-        ElCol(:span='12')
-          ElButton(type='primary' size='large' round @click='shuffle') Shuffle
-        ElCol(:span='12')
-          ElButton(type='success' size='large' round @click='findSolution') Find solution
-      ElRow(type='flex')
-        ElCol(:span='12', :offset='12')
-          ElSelect.algorithms(v-model='algorithm')
-            ElOption(
-              v-for='item of algorithmOptions',
-              :key='item.key',
-              :label='item.label',
-              :value='item.key'
-            )
-  .solution
-    h5 Solution
-    ElTable.solution(:data='solution' border max-height='580')
-      ElTableColumn(prop='from' label='From')
-      ElTableColumn(prop='to' label='To')
-      p(slot='empty') {{ solution ? '8-Puzzle is already solved' : "Solution will be displayed here" }}
-  router-link(to='/ai/wumpus-world')
-    i.el-icon-caret-right
-</template>
-
 <script>
 import map from 'ramda/src/map'
 import deepFreeze from 'deep-freeze'
@@ -107,6 +76,37 @@ export default {
   }
 }
 </script>
+
+<template lang="pug">
+  .root
+    router-link(to='/')
+      i.el-icon-caret-left
+    .solver
+      EightPuzzle(:initial-grid.sync='grid')
+      .control
+        ElRow(type='flex')
+          ElCol(:span='12')
+            ElButton(type='primary' size='large' round @click='shuffle') Shuffle
+          ElCol(:span='12')
+            ElButton(type='success' size='large' round @click='findSolution') Find solution
+        ElRow(type='flex')
+          ElCol(:span='12', :offset='12')
+            ElSelect.algorithms(v-model='algorithm')
+              ElOption(
+              v-for='item of algorithmOptions',
+              :key='item.key',
+              :label='item.label',
+              :value='item.key'
+              )
+    .solution
+      h5 Solution
+      ElTable.solution(:data='solution' border max-height='580')
+        ElTableColumn(prop='from' label='From')
+        ElTableColumn(prop='to' label='To')
+        p(slot='empty') {{ solution ? '8-Puzzle is already solved' : "Solution will be displayed here" }}
+    router-link(to='/ai/wumpus-world')
+      i.el-icon-caret-right
+</template>
 
 <style scoped>
 .root {

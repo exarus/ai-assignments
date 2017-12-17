@@ -4,7 +4,6 @@ import VacuumCleanerWorld from '@/components/VacuumCleanerWorld'
 import GlobalNavigation from '@/components/GlobalNavigation'
 import EightPuzzleGame from '@/components/EightPuzzleGame'
 import EightPuzzleSolver from '@/components/EightPuzzleSolver'
-import WumpusWorld from '@/components/WumpusWorld'
 
 Vue.use(Router)
 
@@ -29,11 +28,6 @@ export default new Router({
       path: '/ai/vacuum-cleaner-world',
       name: VacuumCleanerWorld.name,
       component: VacuumCleanerWorld
-    },
-    {
-      path: '/ai/wumpus-world',
-      name: WumpusWorld.name,
-      component: WumpusWorld
     }
   ]
 })

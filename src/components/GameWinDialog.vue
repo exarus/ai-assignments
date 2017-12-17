@@ -1,11 +1,3 @@
-<template lang="pug">
-ElDialog(title='You won!', :width='dialogWidth()' center)
-  .restart-question Do you want to start a new game?
-  span(slot='footer')
-    ElButton(@click='finishGame') Cancel
-    ElButton(type='primary', @click='startNewGame') Confirm
-</template>
-
 <script>
 import GameStartDialog from './GameStartDialog'
 
@@ -20,6 +12,14 @@ export default {
   }
 }
 </script>
+
+<template lang="pug">
+  ElDialog(title='You won!', :width='dialogWidth()' center)
+    .restart-question Do you want to start a new game?
+    span(slot='footer')
+      ElButton(@click='finishGame') Cancel
+      ElButton(type='primary', @click='startNewGame') Confirm
+</template>
 
 <style scoped>
 .restart-question {

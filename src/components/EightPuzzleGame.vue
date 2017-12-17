@@ -1,19 +1,9 @@
-<template lang="pug">
-.root
-  .game
-    EightPuzzle(:initial-grid.sync='grid')
-    .control
-      ElButton(v-if='gameInProgress', @click='startNewGame' type='warning' size='large') Restart
-      ElButton(v-else @click='startNewGame' type='primary' size='large') Start Game
-  GameStartDialog(:visible.sync='startDialogVisible')
-  GameWinDialog(:visible.sync='winDialogVisible')
-</template>
-
 <script>
 import equals from 'ramda/src/equals'
 import EightPuzzle from './EightPuzzle'
 import GameStartDialog from './GameStartDialog'
-import { defaultGrid, shuffledGrid } from '@/util/8-puzzle'
+import { defaultGrid } from '@/util/8-puzzle'
+import EightPuzzleGame from '@/gamedev/EightPuzzleGame'
 
 const gameInProgressStorageKey = 'gameInProgress'
 
@@ -41,14 +31,18 @@ export default {
     }
   },
   methods: {
-    startNewGame () {
+    prepareNewGame () {
+      this.startDialogVisible = true
+      this.gameInProgress = false
       this.winDialogVisible = false
-      this.gameInProgress = true
-      this.grid = shuffledGrid(200)
+    },
+    startNewGame () {
+      this.grid = new EightPuzzleGame()
     },
     finishGame () {
-      this.winDialogVisible = false
+      this.startDialogVisible = true
       this.gameInProgress = false
+      this.winDialogVisible = false
     },
     dialogWidth () {
       return window.innerWidth > 1130 ? '30%' : '339px'
@@ -56,6 +50,17 @@ export default {
   }
 }
 </script>
+
+<template lang="pug">
+  .root
+    .game
+      EightPuzzle(:initial-grid.sync='grid')
+      .control
+        ElButton(v-if='gameInProgress', @click='startNewGame' type='warning' size='large') Restart
+        ElButton(v-else @click='startNewGame' type='primary' size='large') Start Game
+    GameStartDialog(:visible.sync='startDialogVisible')
+    GameWinDialog(:visible.sync='winDialogVisible')
+</template>
 
 <style scoped>
 .root {

@@ -1,39 +1,37 @@
-<template lang="pug">
-.navigation
-  img(src="~@/assets/ai.svg")
-  h1 Welcome to the world of artificial intelligence
-  h2 Artificial Intelligence
-  ul
-    li
-      router-link(to='/ai/vacuum-cleaner-world') Vacuum Cleaner World
-    li
-      router-link(to='/ai/8-puzzle') 8-Puzzle Problem
-    li
-      router-link(to='/ai/wumpus-world') Wumpus World
-  h2 GameDev
-  ul
-    li
-      router-link(to='/game-dev/8-puzzle') 8-Puzzle Game
-  h2 Contact me
-  ul.author
-    li
-      a(href='https://www.linkedin.com/in/exarus/' target='_blank')
-        i.fa.fa-linkedin-square
-      a(href='https://github.com/exarus' target='_blank')
-        i.fa.fa-github
-      a(href='https://t.me/exarus' target='_blank')
-        i.fa.fa-telegram
-      a(href='https://twitter.com/_exarus' target='_blank')
-        i.fa.fa-twitter
-      a(href='https://www.facebook.com/mr.exarus' target='_blank')
-        i.fa.fa-facebook-official
-</template>
-
 <script>
 export default {
   name: 'GlobalNavigation'
 }
 </script>
+
+<template lang="pug">
+  .navigation
+    img(src="~@/assets/ai.svg")
+    h1 Welcome to the world of artificial intelligence
+    h2 Artificial Intelligence
+    ul
+      li
+        router-link(to='/ai/vacuum-cleaner-world') Vacuum Cleaner World
+      li
+        router-link(to='/ai/8-puzzle') 8-Puzzle Problem
+    h2 GameDev
+    ul
+      li
+        router-link(to='/game-dev/8-puzzle') 8-Puzzle Game
+    h2 Contact me
+    ul.author
+      li
+        a(href='https://www.linkedin.com/in/exarus/' target='_blank')
+          i.fa.fa-linkedin-square
+        a(href='https://github.com/exarus' target='_blank')
+          i.fa.fa-github
+        a(href='https://t.me/exarus' target='_blank')
+          i.fa.fa-telegram
+        a(href='https://twitter.com/_exarus' target='_blank')
+          i.fa.fa-twitter
+        a(href='https://www.facebook.com/mr.exarus' target='_blank')
+          i.fa.fa-facebook-official
+</template>
 
 <style scoped>
 .navigation {

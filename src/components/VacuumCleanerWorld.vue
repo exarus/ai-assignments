@@ -1,24 +1,3 @@
-<template lang="pug">
-.root
-  router-link(to='/')
-    i.el-icon-caret-left
-  .grid-container
-    .grid
-      VacuumCleanerWorldCell(v-for='(cell, index) of cells', :key='index', :state='cell')
-    .control
-      ElButton(type='primary' size='large' round :disabled='worldShouldBeRecreated', @click='nextStep') Next Step
-      ElSelect(v-model='selectedAgent' size='large')
-        ElOption(
-          v-for='a of agentOptions',
-          :key='a.key',
-          :label='a.label',
-          :value='a.key'
-        )
-      ElButton(type='warning' size='large' round, @click='recreateWorld') Recreate World
-  router-link(to='/ai/8-puzzle')
-    i.el-icon-caret-right
-</template>
-
 <script>
 import toSelectOptions from '@/util/toSelectOptions'
 import flatten from 'ramda/src/flatten'
@@ -71,6 +50,27 @@ export default {
   }
 }
 </script>
+
+<template lang="pug">
+  .root
+    router-link(to='/')
+      i.el-icon-caret-left
+    .grid-container
+      .grid
+        VacuumCleanerWorldCell(v-for='(cell, index) of cells', :key='index', :state='cell')
+      .control
+        ElButton(type='primary' size='large' round :disabled='worldShouldBeRecreated', @click='nextStep') Next Step
+        ElSelect(v-model='selectedAgent' size='large')
+          ElOption(
+          v-for='a of agentOptions',
+          :key='a.key',
+          :label='a.label',
+          :value='a.key'
+          )
+        ElButton(type='warning' size='large' round, @click='recreateWorld') Recreate World
+    router-link(to='/ai/8-puzzle')
+      i.el-icon-caret-right
+</template>
 
 <style scoped>
 .root {

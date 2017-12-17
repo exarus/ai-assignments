@@ -1,18 +1,3 @@
-<template lang="pug">
-.grid
-  .row(v-for='row of grid')
-    .cell(
-      v-for='cell of row',
-      :key='cell',
-      :class='{ immovable: !isDraggable(cell) }',
-      :draggable='isDraggable(cell).toString()',
-      @dragstart='dragCell(cell)',
-      @dragover.prevent='',
-      @dragenter.prevent='',
-      @drop.prevent='dropCell(cell)'
-    ) {{cell !== emptyCell ? cell : ''}}
-</template>
-
 <script>
 import equals from 'ramda/src/equals'
 import clone from 'ramda/src/clone'
@@ -83,6 +68,21 @@ export default {
   }
 }
 </script>
+
+<template lang="pug">
+  .grid
+    .row(v-for='row of grid')
+      .cell(
+      v-for='cell of row',
+      :key='cell',
+      :class='{ immovable: !isDraggable(cell) }',
+      :draggable='isDraggable(cell).toString()',
+      @dragstart='dragCell(cell)',
+      @dragover.prevent='',
+      @dragenter.prevent='',
+      @drop.prevent='dropCell(cell)'
+      ) {{cell !== emptyCell ? cell : ''}}
+</template>
 
 <style scoped>
 .grid {

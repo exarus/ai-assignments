@@ -1,7 +1,3 @@
-<template lang="pug">
-div(:class='stateClassObject')
-</template>
-
 <script>
 export default {
   name: 'VacuumCleanerWorldCell',
@@ -18,6 +14,10 @@ export default {
   }
 }
 </script>
+
+<template lang="pug">
+  div(:class='stateClassObject')
+</template>
 
 <style scoped>
 .dirty {
