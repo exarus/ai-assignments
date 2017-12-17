@@ -33,7 +33,7 @@ export default {
           i.fa.fa-facebook-official
 </template>
 
-<style scoped>
+<style scoped lang="postcss">
 .navigation {
   text-align: center;
 }

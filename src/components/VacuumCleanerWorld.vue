@@ -72,7 +72,7 @@ export default {
       i.el-icon-caret-right
 </template>
 
-<style scoped>
+<style scoped lang="postcss">
 .root {
   display: flex;
   font-size: 1rem;

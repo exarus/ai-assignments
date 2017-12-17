@@ -19,7 +19,7 @@ export default {
   div(:class='stateClassObject')
 </template>
 
-<style scoped>
+<style scoped lang="postcss">
 .dirty {
   background: url('~@/assets/dirty.jpg') center / contain no-repeat;
 }

@@ -15,7 +15,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="postcss">
 #app {
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
