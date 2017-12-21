@@ -47,7 +47,7 @@ export default {
   },
   methods: {
     shuffle () {
-      this.grid = shuffledGrid(this.maxShuffle)
+      this.grid = shuffledGrid({ moveCount: this.maxShuffle })
     },
     findSolution () {
       try {

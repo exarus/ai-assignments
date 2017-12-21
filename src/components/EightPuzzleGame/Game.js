@@ -2,9 +2,9 @@ import equals from 'ramda/src/equals'
 import { defaultGrid, shuffledGrid } from '@/util/8-puzzle'
 
 export const gameComplexities = new Map([
-  ['EASY', { label: 'Easy' }],
-  ['MEDIUM', { label: 'Medium' }],
-  ['HARD', { label: 'Hard' }]
+  ['EASY', { label: 'Easy', shuffleCount: 13 }],
+  ['MEDIUM', { label: 'Medium', shuffleCount: 35 }],
+  ['HARD', { label: 'Hard', shuffleCount: 150 }]
 ])
 
 export const gameSizes = new Map([
@@ -13,11 +13,20 @@ export const gameSizes = new Map([
   [4, { label: '4' }]
 ])
 
-const gameGridStorageKey = 'gameGrid'
-
 export default class Game {
-  constructor ({ grid = shuffledGrid(200) }) {
-    this.grid = grid
+  constructor ({
+    grid,
+    saver,
+    complexity = 200,
+    size = 3
+  }) {
+    this.saver = saver
+    if (grid) {
+      this.grid = grid
+    } else {
+      const { shuffleCount } = gameComplexities.get(complexity)
+      this.grid = shuffledGrid({ shuffleCount, size })
+    }
   }
 
   isPuzzleSolved () {
@@ -25,12 +34,7 @@ export default class Game {
   }
 
   save () {
-    localStorage.setItem(gameGridStorageKey, JSON.stringify(this.grid))
-  }
-
-  static load () {
-    const storedGrid = localStorage.getItem(gameGridStorageKey)
-    const grid = storedGrid !== null ? JSON.parse(storedGrid) : defaultGrid
-    return new Game({ grid })
+    const grid = this.grid
+    this.saver.save({ grid })
   }
 }

@@ -50,9 +50,9 @@ const swapCells = (grid, [x1, y1], [x2, y2]) => {
   [grid[x1][y1], grid[x2][y2]] = [grid[x2][y2], grid[x1][y1]]
 }
 
-export const shuffledGrid = (moveCount) => {
+export const shuffledGrid = ({ shuffleCount, size }) => {
   const grid = clone(defaultGrid)
-  for (let i = 0; i < moveCount; i++) {
+  for (let i = 0; i < shuffleCount; i++) {
     const neighbors = emptyCellNeighbors(grid)
     const randomNeighbor = pickRandom(neighbors)
     swapCells(grid, emptyCellIndices(grid), randomNeighbor)

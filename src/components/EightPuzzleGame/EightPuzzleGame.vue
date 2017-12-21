@@ -1,8 +1,9 @@
 <script>
-import Game from './Game'
+import GameSaver from './GameSaver'
 import EightPuzzle from '../EightPuzzle'
 import GameStartDialog from './GameStartDialog'
 import GameWinDialog from './GameWinDialog'
+import { defaultGrid } from '@/util/8-puzzle'
 
 const viewStateStorageKey = 'gameViewState'
 
@@ -16,7 +17,9 @@ export default {
   },
 
   data: () => ({
-    game: Game.load(),
+    game: {
+      grid: defaultGrid
+    },
     state: 'init'
   }),
 
@@ -41,6 +44,10 @@ export default {
     const viewState = localStorage.getItem(viewStateStorageKey)
     if (viewState !== null) {
       this.state = viewState
+      if (viewState === 'inProgress') {
+        const saver = new GameSaver()
+        this.game = saver.load()
+      }
     }
   },
 

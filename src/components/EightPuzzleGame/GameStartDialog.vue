@@ -1,12 +1,13 @@
 <script>
 import toSelectOptions from '@/util/toSelectOptions'
 import Game, { gameComplexities, gameSizes } from './Game'
+import GameSaver from './GameSaver'
 
 export default {
   name: 'GameStartDialog',
   props: ['visible'],
   data: () => ({
-    selectedComplexity: 'Medium',
+    selectedComplexity: 'MEDIUM',
     complexityOptions: toSelectOptions(gameComplexities),
     selectedSize: 3,
     sizeOptions: toSelectOptions(gameSizes)
@@ -15,7 +16,8 @@ export default {
     startNewGame () {
       this.$emit('gameStarted', new Game({
         complexity: this.selectedComplexity,
-        size: this.selectedSize
+        size: this.selectedSize,
+        saver: new GameSaver()
       }))
     },
     dialogWidth () {
