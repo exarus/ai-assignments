@@ -6,9 +6,13 @@ const getZeroPoint = () => [0, 0]
 
 export default {
   name: 'FuzzyClusteringSolver',
+  filters: {
+    roundDecimal: value => value.toFixed(2)
+  },
   data: () => ({
     clusteredObjects: times(getZeroPoint, 8),
-    centroids: times(getZeroPoint, 2)
+    centroids: times(getZeroPoint, 2),
+    results: null
   }),
   methods: {
     addCentroid () {
@@ -24,11 +28,10 @@ export default {
       this.clusteredObjects.splice(index, 1)
     },
     clusterObjects () {
-      const result = fuzzyClustering({
+      this.results = fuzzyClustering({
         centroids: this.centroids,
         objects: this.clusteredObjects
       })
-      console.log(result)
     }
   }
 }
@@ -77,9 +80,25 @@ export default {
       @click="addCentroid"
     ) Add
   ElButton(@click="clusterObjects") Cluster Objects
+  section.results(v-show="results")
+    h2 Result
+    div(v-for="(result, index) of results")
+      h2 Step {{ index + 1 }}
+      h3 Centroids
+      table.centroids
+        tr(v-for="centroid of centroids")
+          td(v-for="coordinate of centroid") {{ coordinate }}
+      h3 Weights
+      table.weights
+        tr(v-for="row of result.weights")
+          td(v-for="weight of row") {{ weight | roundDecimal }}
 </template>
 
 <style scoped lang="postcss">
+.results :matches(table, td, tr) {
+  border: 1px solid gray;
+}
+
 .centroid-cluster {
   margin: 0 16px;
 }
