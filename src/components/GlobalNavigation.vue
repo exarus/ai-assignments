@@ -11,13 +11,17 @@ export default {
     h2 Artificial Intelligence
     ul
       li
-        router-link(to='/ai/vacuum-cleaner-world') Vacuum Cleaner World
+        router-link(to="/ai/vacuum-cleaner-world") Vacuum Cleaner World
       li
-        router-link(to='/ai/8-puzzle') 8-Puzzle Problem
+        router-link(to="/ai/8-puzzle") 8-Puzzle Problem
     h2 GameDev
     ul
       li
-        router-link(to='/game-dev/8-puzzle') 8-Puzzle Game
+        router-link(to="/game-dev/8-puzzle") 8-Puzzle Game
+    h2 Machine Learning
+    ul
+      li
+        router-link(to="/ml/fcm") Fuzzy c-means clustering
     h2 Contact me
     ul.author
       li

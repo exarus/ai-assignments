@@ -4,6 +4,7 @@ import GlobalNavigation from '@/components/GlobalNavigation'
 import VacuumCleanerWorld from '@/components/VacuumCleanerWorld'
 import EightPuzzleSolver from '@/components/EightPuzzleSolver'
 import EightPuzzleGame from '@/components/EightPuzzleGame/EightPuzzleGame'
+import FuzzyClusteringSolver from '@/components/FuzzyClusteringSolver/FuzzyClusteringSolver'
 
 Vue.use(Router)
 
@@ -28,6 +29,11 @@ export default new Router({
       path: '/ai/vacuum-cleaner-world',
       name: VacuumCleanerWorld.name,
       component: VacuumCleanerWorld
+    },
+    {
+      path: '/ml/fcm',
+      name: FuzzyClusteringSolver.name,
+      component: FuzzyClusteringSolver
     }
   ]
 })
