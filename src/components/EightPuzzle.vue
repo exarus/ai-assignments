@@ -1,5 +1,5 @@
 <script>
-import clone from 'ramda/src/clone'
+import { cloneDeep } from 'lodash'
 import { defaultGrid, emptyCellValue as emptyCell, emptyCellIndices, cellIndices, manhattanDistance } from '@/util/8-puzzle'
 
 export default {
@@ -52,7 +52,7 @@ export default {
     },
 
     swapCells ([x1, y1], [x2, y2]) {
-      const grid = clone(this.grid)
+      const grid = cloneDeep(this.grid)
       const tmp = grid[x1][y1]
       grid[x1][y1] = grid[x2][y2]
       grid[x2][y2] = tmp

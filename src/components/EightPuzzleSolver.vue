@@ -1,5 +1,4 @@
 <script>
-import map from 'ramda/src/map'
 import deepFreeze from 'deep-freeze'
 import { Notification } from 'element-ui'
 import EightPuzzle from '@/components/EightPuzzle'
@@ -60,7 +59,7 @@ export default {
           console.log(solution)
         }
         const normalizeArray = arr => JSON.stringify(arr.map(i => i + 1))
-        this.solution = solution.map(map(normalizeArray))
+        this.solution = solution.map(e => e.map(normalizeArray))
         Notification({
           title: 'Success',
           message: 'Solution found',

@@ -22,6 +22,7 @@
   "plugins": [
     "transform-vue-jsx",
     "transform-runtime",
+    "lodash",
     ["component", [
       {
         "libraryName": "element-ui",

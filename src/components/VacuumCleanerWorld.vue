@@ -1,6 +1,6 @@
 <script>
+import { flatten } from 'lodash'
 import toSelectOptions from '@/util/toSelectOptions'
-import flatten from 'ramda/src/flatten'
 import SimpleReflexAgent from '@/ai/vacuum-cleaner-world/SimpleReflexAgent'
 import ModelBasedReflexAgent from '@/ai/vacuum-cleaner-world/ModelBasedReflexAgent'
 import Environment from '@/ai/vacuum-cleaner-world/Environment'
