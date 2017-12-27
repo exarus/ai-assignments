@@ -86,8 +86,8 @@ export default {
       h2 Step {{ index + 1 }}
       h3 Centroids
       table.centroids
-        tr(v-for="centroid of centroids")
-          td(v-for="coordinate of centroid") {{ coordinate }}
+        tr(v-for="centroid of result.centroids")
+          td(v-for="coordinate of centroid") {{ coordinate | roundDecimal }}
       h3 Weights
       table.weights
         tr(v-for="row of result.weights")
@@ -95,8 +95,14 @@ export default {
 </template>
 
 <style scoped lang="postcss">
-.results :matches(table, td, tr) {
-  border: 1px solid gray;
+.results {
+  & :matches(table, td, tr) {
+    border: 1px solid gray;
+  }
+
+  & tr {
+    padding: 4px 8px;
+  }
 }
 
 .centroid-cluster {
