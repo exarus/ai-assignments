@@ -33,7 +33,9 @@ const webpackConfig = merge(baseWebpackConfig, {
     new webpack.DefinePlugin({
       'process.env': env
     }),
-    new LodashModuleReplacementPlugin,
+    new LodashModuleReplacementPlugin({
+      currying: true
+    }),
     new UglifyJsPlugin({
       uglifyOptions: {
         compress: {
