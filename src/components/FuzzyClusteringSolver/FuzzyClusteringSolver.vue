@@ -42,13 +42,9 @@ export default {
   section
     h2 Objects to be clustered
     div(v-for="(object, index) of clusteredObjects")
-      span.centroid-cluster {{ `X${index + 1}` }}
-      ElInputNumber(
-        v-model="object[0]"
-      )
-      ElInputNumber(
-        v-model="object[1]"
-      )
+      span.centroid-cluster X{{ index + 1 }}
+      ElInputNumber(v-model="object[0]")
+      ElInputNumber(v-model="object[1]")
       ElButton.btn-remove(
         size="mini",
         type="danger",
@@ -63,12 +59,8 @@ export default {
     h2 Centroids
     div(v-for="(centroid, index) of centroids")
       span.centroid-cluster {{ index }}
-      ElInputNumber(
-        v-model="centroid[0]"
-      )
-      ElInputNumber(
-        v-model="centroid[1]"
-      )
+      ElInputNumber(v-model="centroid[0]")
+      ElInputNumber(v-model="centroid[1]")
       ElButton.btn-remove(
         size="mini",
         type="danger",
@@ -83,12 +75,12 @@ export default {
   section.results(v-show="results")
     h2 Result
     div(v-for="(result, index) of results")
-      h2 Step {{ index + 1 }}
-      h3 Centroids
+      h3 Step {{ index + 1 }}
+      h4 Centroids
       table.centroids
         tr(v-for="centroid of result.centroids")
           td(v-for="coordinate of centroid") {{ coordinate | roundDecimal }}
-      h3 Weights
+      h4 Weights
       table.weights
         tr(v-for="row of result.weights")
           td(v-for="weight of row") {{ weight | roundDecimal }}
@@ -100,7 +92,7 @@ export default {
     border: 1px solid gray;
   }
 
-  & tr {
+  & td {
     padding: 4px 8px;
   }
 }

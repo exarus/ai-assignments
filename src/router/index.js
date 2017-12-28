@@ -5,6 +5,7 @@ import VacuumCleanerWorld from '@/components/VacuumCleanerWorld'
 import EightPuzzleSolver from '@/components/EightPuzzleSolver'
 import EightPuzzleGame from '@/components/EightPuzzleGame/EightPuzzleGame'
 import FuzzyClusteringSolver from '@/components/FuzzyClusteringSolver/FuzzyClusteringSolver'
+import NaiveBayes from '@/components/NaiveBayes/NaiveBayes'
 
 Vue.use(Router)
 
@@ -34,6 +35,11 @@ export default new Router({
       path: '/ml/fcm',
       name: FuzzyClusteringSolver.name,
       component: FuzzyClusteringSolver
+    },
+    {
+      path: '/ml/naivebayes',
+      name: NaiveBayes.name,
+      component: NaiveBayes
     }
   ]
 })

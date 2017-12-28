@@ -22,6 +22,8 @@ export default {
     ul
       li
         router-link(to="/ml/fcm") Fuzzy c-means clustering
+      li
+        router-link(to="/ml/naivebayes") Naive Bayes classifier
     h2 Contact me
     ul.author
       li
