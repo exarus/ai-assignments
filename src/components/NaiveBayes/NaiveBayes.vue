@@ -10,7 +10,7 @@ export default {
   }),
   methods: {
     addTrainingExample () {
-      this.trainingSet.push({ class: 0, features: [] })
+      this.trainingSet.push({ classId: 0, features: [] })
     },
     removeTrainingExample (exampleIndex) {
       this.trainingSet.splice(exampleIndex, 1)
@@ -48,7 +48,7 @@ export default {
           @click="removeTrainingExample(exampleIndex)"
         )
       h4 Class
-      ElInputNumber(v-model="example.class")
+      ElInputNumber(v-model="example.classId")
       h4 Features
       div(v-for="(feature, featureIndex) of example.features")
         ElInputNumber(v-model="example.features[featureIndex]")
