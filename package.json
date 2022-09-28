@@ -16,7 +16,7 @@
   "dependencies": {
     "deep-freeze": "^0.0.1",
     "element-ui": "2.0.8",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.21",
     "mnemonist": "0.18.0",
     "mobile-drag-drop": "^2.2.0",
     "ramda": "^0.25.0",
